@@ -94,3 +94,8 @@ font-size: large;
 /* .input-fill-outline.sc-ion-input-md-h .input-wrapper.sc-ion-input-md {
 padding: 15px;
 } */
+.toast-custom-class {
+    --color:#ffffff;
+    --max-width:fit-content;
+}
+  

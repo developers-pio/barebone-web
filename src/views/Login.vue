@@ -48,12 +48,21 @@
         </ion-row>
         <ion-row
           ><ion-col size="12">
-            <ion-button
+            <ion-button v-if="!loading"
               color="light"
               shape="round"
               expand="block"
+              
               @click="formSubmit()"
-              >Log In</ion-button
+              >Login</ion-button
+            >
+            <ion-button v-else
+              color="light"
+              shape="round"
+              expand="block"
+              disabled=""
+            
+              >Login &nbsp; <ion-spinner color="medium"></ion-spinner> </ion-button
             >
           </ion-col>
         </ion-row>
@@ -70,7 +79,9 @@ import {
   IonPage,
   IonCol,
   IonRow,
+  IonSpinner
 } from "@ionic/vue";
+import { presentToast } from "../services/utils";
 export default {
   name: "LoginPage",
   components: {
@@ -80,6 +91,7 @@ export default {
     IonButton,
     IonContent,
     IonPage,
+    IonSpinner
   },
   data() {
     return {
@@ -91,6 +103,7 @@ export default {
         email: null,
         password: null,
       },
+      loading:false
     };
   },
 
@@ -120,19 +133,22 @@ export default {
         this.errors.password = "Password Field is required";
       }
       if (this.errors.email === "" && this.errors.password === "") {
-      
-        if(
+        this.loading=true
+        setTimeout(()=>{
+          if (
           process.env.VUE_APP_EMAIL === this.formData.email &&
-            process.env.VUE_APP_PASSWORD === this.formData.password
-        ){
-          this.$router.push({path:'/events'})
-          alert("Logged in Successfully");
-        }else if(process.env.VUE_APP_EMAIL !== this.formData.email){
-          this.errors.email = "Invalid Mail Id";
+          process.env.VUE_APP_PASSWORD === this.formData.password
+        ) {
+          this.$router.push({ path: "/events" });
+          presentToast("top", "Successfully Logged In", "success");
+        } else if (process.env.VUE_APP_EMAIL !== this.formData.email) {
+          presentToast("top", "Invalid Email", "danger");
+        } else if (process.env.VUE_APP_PASSWORD !== this.formData.password) {
+          presentToast("top", "Invalid Password", "danger");
         }
-        else if(process.env.VUE_APP_PASSWORD !== this.formData.password){
-          this.errors.password = "Invalid Password";
-        }
+        this.loading=false
+        },2000)
+       
       }
     },
   },
