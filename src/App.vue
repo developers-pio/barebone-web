@@ -4,7 +4,7 @@
       <ion-menu content-id="main-content" type="overlay">
         <ion-content>
           <ion-list id="inbox-list">
-            <ion-list-header>Inbox</ion-list-header>
+            <ion-list-header>Barebone Aventis</ion-list-header>
             <ion-note>hi@ionicframework.com</ion-note>
 
             <ion-menu-toggle
@@ -31,27 +31,9 @@
               </ion-item>
             </ion-menu-toggle>
           </ion-list>
-
-          <ion-list id="labels-list">
-            <ion-list-header>Labels</ion-list-header>
-
-            <ion-item
-              v-for="(label, index) in labels"
-              lines="none"
-              :key="index"
-            >
-              <ion-icon
-                aria-hidden="true"
-                slot="start"
-                :ios="bookmarkOutline"
-                :md="bookmarkSharp"
-              ></ion-icon>
-              <ion-label>{{ label }}</ion-label>
-            </ion-item>
-          </ion-list>
         </ion-content>
       </ion-menu>
-      <ion-router-outlet id="main-content"></ion-router-outlet>
+        <ion-router-outlet id="main-content"></ion-router-outlet>
     </ion-split-pane>
   </ion-app>
 </template>
@@ -72,20 +54,9 @@ import {
   IonSplitPane,
 } from "@ionic/vue";
 import {
-  archiveOutline,
-  archiveSharp,
-  bookmarkOutline,
-  bookmarkSharp,
-  heartOutline,
-  heartSharp,
-  mailOutline,
-  mailSharp,
-  paperPlaneOutline,
-  paperPlaneSharp,
-  trashOutline,
-  trashSharp,
-  warningOutline,
-  warningSharp,
+  
+  calendarOutline,
+  personOutline
 } from "ionicons/icons";
 
 export default {
@@ -108,45 +79,20 @@ export default {
       selectedIndex: 0,
       appPages: [
         {
-          title: "Inbox",
-          url: "/folder/Inbox",
-          iosIcon: mailOutline,
-          mdIcon: mailSharp,
+          title: "Events",
+          url: "/events",
+          iosIcon: calendarOutline,
+          mdIcon: calendarOutline,
         },
         {
-          title: "Outbox",
-          url: "/folder/Outbox",
-          iosIcon: paperPlaneOutline,
-          mdIcon: paperPlaneSharp,
+          title: "Profile",
+          url: "/profile",
+          iosIcon: personOutline,
+          mdIcon: personOutline,
         },
-        {
-          title: "Favorites",
-          url: "/folder/Favorites",
-          iosIcon: heartOutline,
-          mdIcon: heartSharp,
-        },
-        {
-          title: "Archived",
-          url: "/folder/Archived",
-          iosIcon: archiveOutline,
-          mdIcon: archiveSharp,
-        },
-        {
-          title: "Trash",
-          url: "/folder/Trash",
-          iosIcon: trashOutline,
-          mdIcon: trashSharp,
-        },
-        {
-          title: "Spam",
-          url: "/folder/Spam",
-          iosIcon: warningOutline,
-          mdIcon: warningSharp,
-        },
+        
       ],
       labels: ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"],
-      bookmarkOutline,
-      bookmarkSharp,
     };
   },
   mounted() {
