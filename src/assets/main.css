@@ -1,15 +1,96 @@
-.main-logo{
-    width: 60%;
-    margin: auto;
-}
-.main-heading{
-    margin: 0 auto;
+.main-logo {
+  width: 60%;
+  margin: auto;
 }
 
-@media  (max-width:990px) {
-    .main-logo{
-        width: 100%;
-        margin: auto;
-        padding: 0px 16px 16px 16px;
-    }
+@media (max-width: 990px) {
+  .main-logo {
+    width: 100%;
+    margin: auto;
+    padding: 0px 16px 16px 16px;
+  }
 }
+.login-page-background {
+  --background: url("/public/assets/green image.png")
+    0 0/100% 100% no-repeat;
+}
+
+
+
+ion-input.custom {
+    --color: #fff;
+    --placeholder-color: #ddd;
+    --border-radius: 50px !important;
+    --padding-left: 21px;
+    --padding-right: 21px;
+    --background: rgba(255,255,255,0.3);
+    /* --opacity: 0.3; */
+    /* --border-color: rgba(255,255,255,0.3); */
+    --outline: none;
+    
+  }
+  ion-input.customErr {
+    --color: #fff;
+    --placeholder-color: #ddd;
+    --border-radius: 50px !important;
+    --padding-left: 21px;
+    --padding-right: 21px;
+    --background: rgba(255,255,255,0.3);
+    /* --opacity: 0.3; */
+    /* --border-color: rgba(255,255,255,0.3); */
+    --outline: none;
+    
+  }
+  .labelClass {
+    padding: 15px;
+    font-size: large;
+    font-weight: 800;
+    color: rgb(251, 249, 249);
+  }
+  .labelClassErr {
+    padding: 15px;
+    font-size: large;
+    font-weight: 800;
+    color: rgb(177, 3, 3);
+  }
+
+.WelcomeMessage {
+  color: rgb(244, 237, 237);
+  font-weight: 600;
+  font-size: 40px;
+  padding: 10px;
+  padding-bottom: 110px;
+}
+
+.labelClass {
+  padding: 15px;
+font-size: large;
+  font-weight: 800;
+  color: rgb(251, 249, 249);
+}
+.login-form {
+    max-width: 500px;
+  position: absolute;
+  width: 100%;
+
+  left: 50%;
+  top: 70%;
+  transform: translate(-50%, -70%);
+}
+@media (max-width: 562px) {
+  .login-form {
+    height: 70%;
+    left: 20%;
+    top: 80%;
+    transform: translate(-20%, -80%);
+  }
+  .WelcomeMessage{
+    padding-bottom: 110px;
+  }
+}
+.input-fill-outline.sc-ion-input-md-h .input-outline-container.sc-ion-input-md {
+    display: none;
+}
+/* .input-fill-outline.sc-ion-input-md-h .input-wrapper.sc-ion-input-md {
+padding: 15px;
+} */
