@@ -1,7 +1,7 @@
 {
   "name": "Barebone Aventis",
   "short_name": "aventis",
-  "theme_color": "#4DBA87",
+  "theme_color": "#F1F1F1",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",
@@ -28,5 +28,5 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#000000"
+  "background_color": "#171d1a"
 }
