@@ -3,9 +3,8 @@
     <ion-split-pane content-id="main-content">
       <ion-menu content-id="main-content" type="overlay">
         <ion-content>
-          <ion-list id="inbox-list">
-            <ion-list-header>Barebone Aventis</ion-list-header>
-            <ion-note>hi@ionicframework.com</ion-note>
+          <ion-list id="inbox-list" class="ion-padding-bottom">
+            <ion-img class="ion-padding-bottom main-logo" src="assets/icon/logo.svg"></ion-img>
 
             <ion-menu-toggle
               auto-hide="false"
@@ -46,12 +45,11 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote,
   IonRouterOutlet,
   IonSplitPane,
+  IonImg
 } from "@ionic/vue";
 import {
   
@@ -67,12 +65,11 @@ export default {
     IonItem,
     IonLabel,
     IonList,
-    IonListHeader,
     IonMenu,
     IonMenuToggle,
-    IonNote,
     IonRouterOutlet,
     IonSplitPane,
+    IonImg
   },
   data() {
     return {

@@ -1,0 +1,15 @@
+.main-logo{
+    width: 60%;
+    margin: auto;
+}
+.main-heading{
+    margin: 0 auto;
+}
+
+@media  (max-width:990px) {
+    .main-logo{
+        width: 100%;
+        margin: auto;
+        padding: 0px 16px 16px 16px;
+    }
+}
