@@ -7,10 +7,11 @@ const presentToast = async function (
 ) {
   const toast = await toastController.create({
     message: `${message}`,
-    duration: 1500,
+    duration: 150000,
     position: position,
     color: status,
     cssClass: "toast-custom-class",
+ 
   });
   await toast.present();
 };
