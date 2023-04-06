@@ -8,30 +8,29 @@
         </ion-toolbar>
       </ion-header>
 
-        <div class="d-flex ion-justify-center">
-          <ion-button
+      <ion-tabs>
+        <ion-router-outlet></ion-router-outlet>
+        <ion-tab-bar slot="top">
+          <ion-tab-button
             tab="basicInfo"
-            shape="round"
-            :color="currentTab === 'BasicInfoPage'?'primary':'light'"
-            class="ion-tab-button-class"
             :class="currentTab === 'BasicInfoPage' ? 'active' : ''"
             @click="currentTab = 'BasicInfoPage'"
           >
             <ion-label> Basic Info</ion-label>
-          </ion-button>
+          </ion-tab-button>
 
-          <ion-button
+          <ion-tab-button
             tab="calnedar"
-            class="ion-tab-button-class"
-            shape="round"
-            :color="currentTab === 'CalendarPage'?'primary':'light'"
             :class="currentTab === 'CalendarPage' ? 'active' : ''"
             @click="currentTab = 'CalendarPage'"
           >
             <ion-label> Calendar</ion-label>
-          </ion-button>
-        </div>
-      <component :is="currentTab"></component>
+          </ion-tab-button>
+        </ion-tab-bar>
+        <component :is="currentTab"></component>
+        <!-- <basic-info-page v-if="currentTab==='basicInfo'"></basic-info-page>
+    <calendar-page v-else /> -->
+      </ion-tabs>
     </ion-content>
   </ion-page>
 </template>
@@ -43,13 +42,18 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
+  // IonTabs,
+  // IonTabs,
+  IonRouterOutlet,
   IonTabBar,
-  IonButton,
+  IonTabButton,
   IonLabel,
+  // IonIcon,
+  // IonRouterOutlet,
 } from "@ionic/vue";
 import headerComponent from "@/components/header.vue";
-import BasicInfoPage from "@/components/BasicInfoPage.vue";
-import CalendarPage from "@/components/CalendarPage.vue";
+import BasicInfoPage from "./BasicInfoPage.vue";
+import CalendarPage from "./CalendarPage.vue";
 
 export default {
   name: "ProfilePage",
@@ -58,11 +62,16 @@ export default {
     IonPage,
     headerComponent,
     IonHeader,
+    // IonTabs,
     IonToolbar,
     IonTitle,
+    IonRouterOutlet,
     IonTabBar,
-    IonButton,
+    IonTabButton,
     IonLabel,
+    // IonIcon,
+    // IonRouterOutlet,
+    // IonTabs,
     BasicInfoPage,
     CalendarPage,
   },
