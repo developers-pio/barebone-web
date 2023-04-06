@@ -59,7 +59,7 @@ ion-input.customProfile {
   font-weight: 600;
   font-size: 40px;
   padding: 10px;
-  padding-bottom: 110px;
+  padding-bottom: 70px;
 }
 .d-flex{
     display: flex;
@@ -89,12 +89,7 @@ ion-input.customProfile {
 }
 .login-form {
   max-width: 500px;
-  position: absolute;
-  width: 10%;
-
-  left: 50%;
-  top: 70%;
-  transform: translate(-50%, -70%);
+  width: 100%;
 }
 
 .h-100{
@@ -104,12 +99,6 @@ ion-input.customProfile {
   width: 100%;
 }
 @media (max-width: 562px) {
-  .login-form {
-    height: 70%;
-    left: 20%;
-    top: 80%;
-    transform: translate(-20%, -80%);
-  }
   .WelcomeMessage {
     padding-bottom: 110px;
   }

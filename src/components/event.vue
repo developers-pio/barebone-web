@@ -80,9 +80,9 @@ export default {
 
             const deleteAnimation = createAnimation()
                 .addElement(this.$el)
-                .duration(200)
+                .duration(100)
                 .easing('ease-out')
-                .fromTo('height', '416px', 0)
+                .fromTo('width', '100%', 0)
 
             const swipeGesture = createGesture({
                 el: itemElement,
@@ -90,11 +90,9 @@ export default {
                 direction: 'x',
                 gestureName: 'swipe-dismiss',
                 onMove: (ev) => {
-                    // Reposition card
                     itemElement.style.transform = `translateX(${ev.deltaX}px)`
                 },
                 onEnd: (ev) => {
-                    console.log(ev)
                     itemElement.style.transition = '0.2s ease-out'
 
                     // Fly out the card if we cross the threshold of 150px
@@ -106,8 +104,6 @@ export default {
                         deleteAnimation.onFinish(async () => {
                             this.$el.style.display = 'none'
                             this.$emit('reject-event',this.event)
-
-                            // Finish code to completely remove from your state
                         })
                     } 
                     if (ev.deltaX > 150) {
@@ -126,7 +122,6 @@ export default {
                     }
                 },
             })
-
             swipeGesture.enable()
         },
   methods: {
