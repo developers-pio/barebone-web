@@ -63,24 +63,14 @@
           ></ion-input>
             
                 <ion-modal ref="modal" trigger="open-modal" :keep-contents-mounted="true">
-            <!-- <ng-template> -->
             <ion-datetime
               id="datetime"
               v-model="formData.dob"
               presentation="date"
               @ion-change="dismiss()"
             ></ion-datetime>
-            <!-- </ng-template> -->
           </ion-modal>
                
-         
-
-          <!-- <span
-                      slot="error"
-                      v-if="errors.email"
-                      style="color: white; padding-left: 15px"
-                      >{{ errors.email }}</span
-                    > -->
         </ion-col>
 
         <ion-col size="12">
@@ -96,12 +86,6 @@
             v-model="formData.location"
           ></ion-input>
 
-          <!-- <span
-                      slot="error"
-                      v-if="errors.email"
-                      style="color: white; padding-left: 15px"
-                      >{{ errors.email }}</span
-                    > -->
         </ion-col>
         <ion-col size="12">
           <label class="labelClassProfile">Email </label>
@@ -117,30 +101,19 @@
             v-model="formData.email"
           ></ion-input>
 
-          <!-- <span
-                      slot="error"
-                      v-if="errors.email"
-                      style="color: white; padding-left: 15px"
-                      >{{ errors.email }}</span
-                    > -->
         </ion-col>
 
         <ion-col size="12">
-          <!-- <label class="labelClassProfile">Email </label> -->
-
           <interest-page
-            :interests="formData.interests"
+            :interests="formData.interests || {}"
             v-model="formData.interests"
             @addInterests="addInterests($event)"
           />
         </ion-col>
         <ion-col size="12">
-          <!-- <label class="labelClassProfile">Email </label> -->
-
           <availablility-page
-            :availability="formData.availability"
-            v-model="formData.availability"
-            
+            :availability="formData.availability || []"
+            v-model="formData.availability"  
           />
         </ion-col>
         <ion-col size="12">
@@ -168,7 +141,6 @@
 
 <script>
 import {
-  //   IonPage,
   IonContent,
   IonInput,
   IonCol,
@@ -178,18 +150,15 @@ import {
   IonModal,
   IonButton,
   IonSpinner
-  //   IonItem,
-  //   IonLabel,
 } from "@ionic/vue";
-import InterestPage from "../../components/interestPage.vue";
-import AvailablilityPage from "../../components/availablilityPage.vue";
-import userStaticData from "../../services/constants";
-import { secureStorage } from "../../services/utils"
-import { presentToast } from "../../services/utils"
+import InterestPage from "@/components/interestPage.vue";
+import AvailablilityPage from "@/components/availablilityPage.vue";
+import userStaticData from "@/services/constants";
+import { secureStorage } from "@/services/utils"
+import { presentToast } from "@/services/utils"
 export default {
   name: "BasicInformation",
   components: {
-    // IonPage,
     IonContent,
     IonInput,
     IonCol,
@@ -201,8 +170,6 @@ export default {
     IonModal,
     IonButton,
     IonSpinner
-    // IonItem,
-    // IonLabel,
   },
    mounted() {
     const userData = secureStorage().getItem('userInfo')
@@ -210,11 +177,7 @@ export default {
         this.formData = userData
     }else{
         this.formData = userStaticData.userStaticData
-        console.log(this.formData)
-
-
     }
-    // console.log(document.getElementsByClassName("ion-color ion-color-primary md"))
   },
   methods: {
     dismiss() {

@@ -8,29 +8,24 @@
         </ion-toolbar>
       </ion-header>
 
-      <ion-tabs>
-        <ion-router-outlet></ion-router-outlet>
-        <ion-tab-bar slot="top">
-          <ion-tab-button
+        <div class="d-flex ion-justify-center">
+          <ion-button
             tab="basicInfo"
             :class="currentTab === 'BasicInfoPage' ? 'active' : ''"
             @click="currentTab = 'BasicInfoPage'"
           >
             <ion-label> Basic Info</ion-label>
-          </ion-tab-button>
+          </ion-button>
 
-          <ion-tab-button
+          <ion-button
             tab="calnedar"
             :class="currentTab === 'CalendarPage' ? 'active' : ''"
             @click="currentTab = 'CalendarPage'"
           >
             <ion-label> Calendar</ion-label>
-          </ion-tab-button>
-        </ion-tab-bar>
-        <component :is="currentTab"></component>
-        <!-- <basic-info-page v-if="currentTab==='basicInfo'"></basic-info-page>
-    <calendar-page v-else /> -->
-      </ion-tabs>
+          </ion-button>
+        </div>
+      <component :is="currentTab"></component>
     </ion-content>
   </ion-page>
 </template>
@@ -42,18 +37,13 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
-  // IonTabs,
-  // IonTabs,
-  IonRouterOutlet,
   IonTabBar,
-  IonTabButton,
+  IonButton,
   IonLabel,
-  // IonIcon,
-  // IonRouterOutlet,
 } from "@ionic/vue";
 import headerComponent from "@/components/header.vue";
-import BasicInfoPage from "./BasicInfoPage.vue";
-import CalendarPage from "./CalendarPage.vue";
+import BasicInfoPage from "@/components/BasicInfoPage.vue";
+import CalendarPage from "@/components/CalendarPage.vue";
 
 export default {
   name: "ProfilePage",
@@ -62,16 +52,11 @@ export default {
     IonPage,
     headerComponent,
     IonHeader,
-    // IonTabs,
     IonToolbar,
     IonTitle,
-    IonRouterOutlet,
     IonTabBar,
-    IonTabButton,
+    IonButton,
     IonLabel,
-    // IonIcon,
-    // IonRouterOutlet,
-    // IonTabs,
     BasicInfoPage,
     CalendarPage,
   },

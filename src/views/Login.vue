@@ -139,12 +139,11 @@ export default {
           process.env.VUE_APP_EMAIL === this.formData.email &&
           process.env.VUE_APP_PASSWORD === this.formData.password
         ) {
+          localStorage.setItem('loggedIn',true)
           this.$router.push({ path: "/events" });
           presentToast("top", "Successfully Logged In", "success");
-        } else if (process.env.VUE_APP_EMAIL !== this.formData.email) {
-          presentToast("top", "Invalid Email", "danger");
-        } else if (process.env.VUE_APP_PASSWORD !== this.formData.password) {
-          presentToast("top", "Invalid Password", "danger");
+        } else{
+          presentToast("top", "Invalid Credentials", "danger");
         }
         this.loading=false
         },2000)

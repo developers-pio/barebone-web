@@ -4,8 +4,6 @@
     <ion-col>
       <h3 class="gray-color">{{ inter }}</h3>
       <br />
-      <!-- <article class="feature1" v-for="val in item.values" :key="val.id"> -->
-
       <div>
         <ion-chip
           :class="getActiveStatus(inter,val) ? 'active' : ''"
@@ -16,40 +14,29 @@
           {{ val }}
         </ion-chip>
       </div>
-      <!-- </article> -->
     </ion-col>
   </ion-row>
-
-  <!-- </div> -->
 </template>
 
 <script>
 import {
-  // //   IonPage,
-  // //   IonContent,
-  // //   IonInput,
   IonCol,
   IonRow,
   IonChip,
-  // //   IonItem,
-  // //   IonLabel,
 } from "@ionic/vue";
-// import InterestPage from '../../components/interestPage.vue';
-// import constants from "../services/constants";
 export default {
   name: "BasicInformation",
-  props: ["interests"],
+  props: {
+    interests:{
+      type: Object,
+      required: true
+    }
+  },
   emits: ["addInterests"],
   components: {
-    // IonPage,
-    // IonContent,
-    // IonInput,
     IonChip,
     IonCol,
     IonRow,
-    // InterestPage,
-    // IonItem,
-    // IonLabel,
   },
   data() {
     return {
@@ -79,15 +66,6 @@ export default {
       },
     };
   },
-  
-  mounted() {
-    // setTimeout(() => {
-    //  this.interest= this.interests;
-    // }, 1000);
-    // console.log(this.interests)
-    // console.log(constants.interests);
-  },
-
   methods: {
     changeInterest(key,value) {
         const interest={...this.interests}
@@ -108,13 +86,8 @@ export default {
             return false
           }
         return true
-
         }
-      
-       return false
-   
-       
-      
+       return false 
     },
   },
 };
