@@ -1,7 +1,7 @@
 <template>
-  <ion-content style="height:110%">
+  <ion-content style="height: 110%">
     <h2 class="gray-color">Basic Information</h2>
-    <div style="max-width: 660px; margin: 0 auto; padding-top: 50px">
+    <div style="max-width: 660px; margin: 0 auto; padding-top: 20px">
       <ion-row
         ><ion-col size="12">
           <label class="labelClassProfile">First Name</label>
@@ -13,6 +13,7 @@
             fill="outline"
             autocomplete="none"
             class="customProfile"
+            v-model="formData.firstName"
           ></ion-input>
 
           <!-- <span
@@ -32,6 +33,7 @@
             fill="outline"
             autocomplete="none"
             class="customProfile"
+            v-model="formData.lastName"
           ></ion-input>
 
           <!-- <span
@@ -44,15 +46,34 @@
         <ion-col size="12">
           <label class="labelClassProfile">Date of Birth </label>
 
-          <ion-datetime-button datetime="datetime" calss="dateTimeField"
+          <ion-datetime-button datetime="datetime" calss="dateTimeField" style="display: none;"
             ><slot name="date-target"></slot
           ></ion-datetime-button>
-
-          <ion-modal ref="modal" :keep-contents-mounted="true">
+          <ion-input
+            aria-label="dob"
+            placeholder="Date Of Birth"
+            type="text"
+            id="open-modal"
+            fill="outline"
+            autocomplete="none"
+            :readonly="true"
+            class="customProfile"
+            v-model="formData.dob"
+            @click="datepicker=true"
+          ></ion-input>
+            
+                <ion-modal ref="modal" trigger="open-modal" :keep-contents-mounted="true">
             <!-- <ng-template> -->
-            <ion-datetime id="datetime" @ion-change="dismiss()"></ion-datetime>
+            <ion-datetime
+              id="datetime"
+              v-model="formData.dob"
+              presentation="date"
+              @ion-change="dismiss()"
+            ></ion-datetime>
             <!-- </ng-template> -->
           </ion-modal>
+               
+         
 
           <!-- <span
                       slot="error"
@@ -72,7 +93,7 @@
             fill="outline"
             autocomplete="none"
             class="customProfile"
-            :value="formData.location"
+            v-model="formData.location"
           ></ion-input>
 
           <!-- <span
@@ -93,7 +114,7 @@
             autocomplete="none"
             class="customProfile"
             readonly
-            :value="formData.email"
+            v-model="formData.email"
           ></ion-input>
 
           <!-- <span
@@ -107,12 +128,38 @@
         <ion-col size="12">
           <!-- <label class="labelClassProfile">Email </label> -->
 
-          <interest-page />
+          <interest-page
+            :interests="formData.interests"
+            v-model="formData.interests"
+            @addInterests="addInterests($event)"
+          />
         </ion-col>
         <ion-col size="12">
           <!-- <label class="labelClassProfile">Email </label> -->
 
-          <availablility-page />
+          <availablility-page
+            :availability="formData.availability"
+            v-model="formData.availability"
+            
+          />
+        </ion-col>
+        <ion-col size="12">
+          <ion-button
+            v-if="!loading"
+            color="primary"
+            shape="round"
+            expand="block"
+            @click="formSubmit()"
+            >Submit</ion-button
+          >
+          <ion-button
+            v-else
+            color="secondary"
+            shape="round"
+            expand="block"
+            disabled=""
+            >Submitting.. &nbsp; <ion-spinner color="medium"></ion-spinner>
+          </ion-button>
         </ion-col>
       </ion-row>
     </div>
@@ -129,12 +176,16 @@ import {
   IonDatetime,
   IonDatetimeButton,
   IonModal,
+  IonButton,
+  IonSpinner
   //   IonItem,
   //   IonLabel,
 } from "@ionic/vue";
 import InterestPage from "../../components/interestPage.vue";
 import AvailablilityPage from "../../components/availablilityPage.vue";
-import constants from '../../services/constants';
+import userStaticData from "../../services/constants";
+import { secureStorage } from "../../services/utils"
+import { presentToast } from "../../services/utils"
 export default {
   name: "BasicInformation",
   components: {
@@ -148,26 +199,54 @@ export default {
     IonDatetime,
     IonDatetimeButton,
     IonModal,
+    IonButton,
+    IonSpinner
     // IonItem,
     // IonLabel,
   },
-  mounted() {
-    
-    this.formData.email = process.env.VUE_APP_EMAIL;
-    this.formData.location=constants.location
+   mounted() {
+    const userData = secureStorage().getItem('userInfo')
+    if(userData){
+        this.formData = userData
+    }else{
+        this.formData = userStaticData.userStaticData
+        console.log(this.formData)
+
+
+    }
     // console.log(document.getElementsByClassName("ion-color ion-color-primary md"))
   },
   methods: {
     dismiss() {
       this.$refs.modal.$el.dismiss();
     },
+    formSubmit() {
+        this.loading=true
+        setTimeout(()=>{
+            presentToast("top", "Profile Updated Successfully", "success");
+            secureStorage().setItem('userInfo',this.formData)
+            this.loading=false
+        },2000)
+    },
+    addInterests(e) {
+      console.log(e);
+    },
   },
   data() {
     return {
       formData: {
         email: "",
-        location:""
+        location: "",
+        firstName: "",
+        lastName: "",
+        dob: "2023-04-05",
+        interests: {},
+        availability: [],
       },
+      interest:{},
+      loading: false,
+      datepicker:false
+      
     };
   },
 };

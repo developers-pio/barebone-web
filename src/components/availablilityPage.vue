@@ -1,12 +1,12 @@
 <template>
   <div>    <h2 class="gray-color">What's your availability?</h2>
-    <ion-card class="commonCardClass" v-for="item in cards" :key="item">
+    <ion-card class="commonCardClass" v-for="(item) in cards" :key="item">
     <ion-card-header>
       <!-- <ion-card-title>Mon</ion-card-title> -->
       <div>
-        <span class="commonCardText">{{ item.day }}</span>
-        <span class="commonCardmonth">{{ item.month }} {{ item.date }}</span>
-        <span style="float: right;">   <ion-toggle size="small" aria-label=""></ion-toggle></span>
+        <span class="commonCardText">{{ getDay(item.date) }}</span>
+        <span class="commonCardmonth">{{ getMonth(item.date) }} {{ getDate(item.date) }}  </span>
+        <span style="float: right;">   <ion-toggle size="small" :checked="item.isAvailable" v-model="item.isAvailable" @ion-change="checkAvailibility($event,item)" aria-label="" ></ion-toggle></span>
      
       </div>
     </ion-card-header>
@@ -16,13 +16,15 @@
         aria-label="Dual Knobs Range"
         :dual-knobs="true"
         :pin="true"
-        :value="{ lower: 1, upper: 24 }"
+        v-model="item.range"
+        @ion-change="changeRange($event,item)"
+        
         max="23"
         Min="0"
         :pinFormatter="(value) =>  `${value<10?'0':''}${Math.round(value)}:00`"
       ></ion-range>
       <div style="text-align: center">
-        <ion-button @click="createCard">+</ion-button>
+        <ion-button @click="createCard(item.date)">+</ion-button>
       </div>
     </ion-card-content>
   </ion-card>
@@ -42,6 +44,7 @@ import {
 } from "@ionic/vue";
 
 export default {
+  props:["availability"],
   components: {
     IonCard,
     IonCardContent,
@@ -60,31 +63,58 @@ export default {
           date: "",
         },
       ],
-      date:""
+      date:"",
+      // available:{
+      //   date:"",
+      //   isAvailable:false
+      // }
       
     };
   },
   
   mounted() {
-    this.date = new Date();
-    this.getDateTime(0, this.date);
+    setTimeout(()=>{
+    this.cards=this.availability
+    },500)
+
   },
   methods: {
-    createCard() {
-     this.date = new Date(new Date(this.date).getTime() + 24 * 60 * 60 * 1000);
+    createCard(date) {
+     this.date = new Date(new Date(date).getTime() + 24 * 60 * 60 * 1000);
      
       let obj = {
-        month: this.date.toLocaleString("default", { month: "short" }),
-        day: this.date.toLocaleString("default", { weekday: "long" }),
-        date: this.date.getDate(),
+        date:  this.date,
+        isAvailable: false,
+        range:{lower: 0, upper: 23}
       };
       this.cards.push(obj);
     },
-    getDateTime(i = 0, date) {
-      this.cards[i].month = date.toLocaleString("default", { month: "short" });
-      this.cards[i].day = date.toLocaleString("default", { weekday: "long" });
-      this.cards[i].date = date.getDate();
+    // getDateTime(i = 0, date) {
+    //   this.cards[i].month = date.toLocaleString("default", { month: "short" });
+    //   this.cards[i].day = date.toLocaleString("default", { weekday: "long" });
+    //   this.cards[i].date = date.getDate();
+    // },
+    changeRange(e,item){
+      console.log(e.target.value,item)
+ 
+      this.$emit('input',this.cards)
     },
+    checkAvailibility(e,item){
+      console.log(e.target.checked,item)
+      this.$emit('input',this.cards)
+    },
+    getDay(val){
+      
+      return  new Date(val).toLocaleString("default", { weekday: "long" });
+
+    },
+    getMonth(val){
+      return new Date(val).toLocaleString("default", { month: "short" });
+    },
+    getDate(val){
+      return new Date(val).getDate();
+    
+    }
   },
 };
 </script>
