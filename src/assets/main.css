@@ -52,6 +52,18 @@ ion-input.customProfile {
     /* --border-color: rgba(255,255,255,0.3); */
     --outline: none;
 }
+ion-input.custom-filter {
+    --color: var(--ion-color-dark);
+    --placeholder-color: var(--ion-color-dark);
+    ;
+    --border-radius: 50px !important;
+    --padding-left: 50px !important;
+    --padding-right: 21px;
+    --background: var(--ion-color-light);
+    /* --opacity: 0.3; */
+    /* --border-color: rgba(255,255,255,0.3); */
+    --outline: none;
+}
 
 .labelClass {
     padding: 15px;

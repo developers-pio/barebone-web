@@ -1,59 +1,190 @@
 <template>
-    <ion-split-pane content-id="main-content">
-      <ion-menu content-id="main-content" type="overlay" menu-id="main-menu">
-        <ion-content v-if="menu.name==='filter' && menu.active">
-          filters
-        </ion-content>
-        <ion-content v-else>
-          <ion-list id="inbox-list" class="ion-padding-bottom">
-            <ion-img
-              class="ion-padding-bottom main-logo"
-              :src="require('@/assets/icons/logo.svg')"
-            ></ion-img>
+  <ion-split-pane content-id="main-content">
+    <ion-menu content-id="main-content" type="overlay" menu-id="main-menu">
+      <ion-content v-if="menu.name === 'filter' && menu.active">
+        <ion-img
+          class="ion-padding-bottom main-logo"
+          :src="require('@/assets/icons/logo.svg')"
+        ></ion-img>
+        filters
+        <div>
+          <ion-row
+            ><ion-col size="12">
+              <ion-input
+                aria-label="Radius"
+                placeholder="Radius"
+                type="text"
+                fill="outline"
+                autocomplete="none"
+                class="custom-filter"
+              ></ion-input>
 
-            <ion-menu-toggle
-              auto-hide="false"
-              v-for="(p, i) in appPages"
-              :key="i"
-            >
-              <ion-item
-                @click="selectedIndex = i"
-                router-direction="root"
-                :router-link="p.url"
-                lines="none"
-                detail="false"
-                class="hydrated"
-                :class="{ selected: selectedIndex === i }"
+              <!-- <span
+                      slot="error"
+                      v-if="errors.email"
+                      style="color: white; padding-left: 15px"
+                      >{{ errors.email }}</span
+                    > -->
+            </ion-col>
+            <ion-col size="12">
+              <ion-select
+                aria-label="Units"
+                interface="popover"
+                placeholder="Units"
               >
-                <ion-icon
-                  aria-hidden="true"
-                  slot="start"
-                  :ios="p.iosIcon"
-                  :md="p.mdIcon"
-                ></ion-icon>
-                <ion-label>{{ p.title }}</ion-label>
-              </ion-item>
-            </ion-menu-toggle>
+                <ion-select-option value="Miles">Miles</ion-select-option>
+                <ion-select-option value="KM">KM</ion-select-option>
+                <ion-select-option value="none">none</ion-select-option>
+              </ion-select>
+
+              <!-- <span
+            slot="error"
+            v-if="errors.email"
+            style="color: white; padding-left: 15px"
+            >{{ errors.email }}</span
+          > -->
+            </ion-col>
+            <ion-col size="12">
+              <!-- <label class="labelClassProfile">S </label> -->
+
+              <ion-datetime-button
+                datetime="sdatetime"
+                calss="dateTimeField"
+                style="display: none"
+                ><slot name="date-target"></slot
+              ></ion-datetime-button>
+              <ion-input
+                aria-label="startdate"
+                placeholder="Start Date Time"
+                type="text"
+                id="open-modal-start-date"
+                fill="outline"
+                autocomplete="none"
+                :readonly="true"
+                class="custom-filter"
+              ></ion-input>
+
+              <ion-modal
+                ref="modal1"
+                trigger="open-modal-start-date"
+                :keep-contents-mounted="true"
+              >
+                <ion-datetime
+                  id="sdatetime"
+                  presentation="date-time"
+                  @ion-change="dismiss()"
+                ></ion-datetime>
+              </ion-modal>
+            </ion-col>
+            <ion-col size="12">
+             
+
+              <ion-datetime-button
+                datetime="endDate"
+                calss="dateTimeField"
+                style="display: none"
+                ><slot name="date-target"></slot
+              ></ion-datetime-button>
+              <ion-input
+                aria-label="endDate"
+                placeholder="End Date Time"
+                type="text"
+                id="open-modal-end-date"
+                fill="outline"
+                autocomplete="none"
+                :readonly="true"
+                class="custom-filter"
+              ></ion-input>
+
+              <ion-modal
+                ref="modal2"
+                trigger="open-modal-end-date"
+                :keep-contents-mounted="true"
+              >
+                <ion-datetime
+                  id="edatetime"
+                  presentation="date-time"
+                  @ion-change="dismiss()"
+                ></ion-datetime>
+              </ion-modal>
+            </ion-col>
+            <ion-col size="12">
+              <ion-select
+                aria-label="Units"
+                interface="popover"
+                placeholder="Include Family"
+                
+              >
+                <ion-select-option value="Yes">Yes</ion-select-option>
+                <ion-select-option value="No">No</ion-select-option>
+                <ion-select-option value="Only">Only</ion-select-option>
+                <ion-select-option value="none">none</ion-select-option>
+              </ion-select>
+
+              <!-- <span
+            slot="error"
+            v-if="errors.email"
+            style="color: white; padding-left: 15px"
+            >{{ errors.email }}</span
+          > -->
+            </ion-col>
+            <ion-col size="12">
+              <ion-button color="primary"
+            shape="round"
+            expand="block">Apply Filter</ion-button>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-content>
+      <ion-content v-else>
+        <ion-list id="inbox-list" class="ion-padding-bottom">
+          <ion-img
+            class="ion-padding-bottom main-logo"
+            :src="require('@/assets/icons/logo.svg')"
+          ></ion-img>
+
+          <ion-menu-toggle
+            auto-hide="false"
+            v-for="(p, i) in appPages"
+            :key="i"
+          >
             <ion-item
-                @click="signOut"
-                lines="none"
-                detail="false"
-                class="hydrated"
-              >
-                <ion-icon
-                  aria-hidden="true"
-                  slot="start"
-                  :ios="logOutOutline"
-                  :md="logOutOutline"
-                ></ion-icon>
-                <ion-label>Sign Out</ion-label>
-              </ion-item>
-          </ion-list>
-        </ion-content>
-        
-      </ion-menu>
-      <ion-router-outlet id="main-content"></ion-router-outlet>
-    </ion-split-pane>
+              @click="selectedIndex = i"
+              router-direction="root"
+              :router-link="p.url"
+              lines="none"
+              detail="false"
+              class="hydrated"
+              :class="{ selected: selectedIndex === i }"
+            >
+              <ion-icon
+                aria-hidden="true"
+                slot="start"
+                :ios="p.iosIcon"
+                :md="p.mdIcon"
+              ></ion-icon>
+              <ion-label>{{ p.title }}</ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+          <ion-item
+            @click="signOut"
+            lines="none"
+            detail="false"
+            class="hydrated"
+          >
+            <ion-icon
+              aria-hidden="true"
+              slot="start"
+              :ios="logOutOutline"
+              :md="logOutOutline"
+            ></ion-icon>
+            <ion-label>Sign Out</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
 </template>
 
 <script>
@@ -68,13 +199,18 @@ import {
   IonSplitPane,
   IonImg,
   IonRouterOutlet,
+  IonSelect,
+  IonSelectOption,
+  IonDatetime,
+  IonDatetimeButton,
+  IonModal
   // IonRow,
   // IonCol,
   // IonInput
 } from "@ionic/vue";
 import { calendarOutline, personOutline, logOutOutline } from "ionicons/icons";
-import { mapState, mapActions  } from 'pinia'
-import { eventStore  } from '@/stores/eventStore'
+import { mapState, mapActions } from "pinia";
+import { eventStore } from "@/stores/eventStore";
 
 export default {
   name: "MainLayout",
@@ -89,6 +225,11 @@ export default {
     IonSplitPane,
     IonImg,
     IonRouterOutlet,
+    IonSelect,
+    IonSelectOption,
+    IonDatetime,
+    IonDatetimeButton,
+    IonModal
     // IonRow,
     // IonCol,
     // IonInput
@@ -123,17 +264,21 @@ export default {
     }
   },
   computed: {
-    ...mapState(eventStore,['menu']),
+    ...mapState(eventStore, ["menu"]),
     layout() {
       return `${this.$route.meta.layout || "default"}-layout`;
     },
   },
   methods: {
-    ...mapActions(eventStore,['setMenu']),
+    dismiss() {
+      this.$refs.modal1.$el.dismiss();
+      this.$refs.modal2.$el.dismiss();
+    },
+    ...mapActions(eventStore, ["setMenu"]),
     signOut() {
-        localStorage.removeItem('loggedIn')
-        this.$router.push('/login')
-    }
+      localStorage.removeItem("loggedIn");
+      this.$router.push("/login");
+    },
   },
 };
 </script>
