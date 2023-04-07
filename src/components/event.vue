@@ -50,7 +50,7 @@
         </div>
         <div class="d-flex flex-column">
           <div>{{ event.distance }} {{ event.units }}</div>
-          <div>{{ getDate(event.dates.start.dateTime) }}</div>
+          <div>{{ getDate(event.dates.start.localDate) }}</div>
           <ion-chip style="width:fit-content;" class="ellipsis-1"
               >TicketMaster</ion-chip
             >
