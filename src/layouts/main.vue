@@ -1,7 +1,10 @@
 <template>
     <ion-split-pane content-id="main-content">
       <ion-menu content-id="main-content" type="overlay" menu-id="main-menu">
-        <ion-content>
+        <ion-content v-if="menu.name==='filter' && menu.active">
+          filters
+        </ion-content>
+        <ion-content v-else>
           <ion-list id="inbox-list" class="ion-padding-bottom">
             <ion-img
               class="ion-padding-bottom main-logo"
@@ -47,6 +50,7 @@
               </ion-item>
           </ion-list>
         </ion-content>
+        
       </ion-menu>
       <ion-router-outlet id="main-content"></ion-router-outlet>
     </ion-split-pane>
@@ -63,9 +67,14 @@ import {
   IonMenuToggle,
   IonSplitPane,
   IonImg,
-  IonRouterOutlet
+  IonRouterOutlet,
+  // IonRow,
+  // IonCol,
+  // IonInput
 } from "@ionic/vue";
 import { calendarOutline, personOutline, logOutOutline } from "ionicons/icons";
+import { mapState, mapActions  } from 'pinia'
+import { eventStore  } from '@/stores/eventStore'
 
 export default {
   name: "MainLayout",
@@ -79,7 +88,10 @@ export default {
     IonMenuToggle,
     IonSplitPane,
     IonImg,
-    IonRouterOutlet
+    IonRouterOutlet,
+    // IonRow,
+    // IonCol,
+    // IonInput
   },
   data() {
     return {
@@ -111,11 +123,13 @@ export default {
     }
   },
   computed: {
+    ...mapState(eventStore,['menu']),
     layout() {
       return `${this.$route.meta.layout || "default"}-layout`;
     },
   },
   methods: {
+    ...mapActions(eventStore,['setMenu']),
     signOut() {
         localStorage.removeItem('loggedIn')
         this.$router.push('/login')

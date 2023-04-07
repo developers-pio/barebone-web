@@ -8,13 +8,15 @@
         </ion-toolbar>
       </ion-header>
       <div class="d-flex ion-justify-content-between">
-        <ion-icon
-          aria-hidden="true"
-          :ios="optionsOutline"
-          :md="optionsOutline"
-          color="primary"
-          size="large"
-        ></ion-icon>
+        <ion-menu-button :auto-hide="false" color="primary" @click="setMenu({name:'filter',active: getMenuStatus()})">
+            <ion-icon
+            aria-hidden="true"
+            :ios="optionsOutline"
+            :md="optionsOutline"
+            color="primary"
+            size="large"
+          ></ion-icon>
+        </ion-menu-button>
         <ion-input
           style="max-width: 300px"
           label=""
@@ -63,12 +65,16 @@ import {
   IonInput,
   IonCard,
   IonSpinner,
+  // IonMenu,
+  IonMenuButton,
 } from "@ionic/vue";
 import { optionsOutline  } from "ionicons/icons";
 import HeaderComponent from "@/components/header.vue";
 import EventComponent from "@/components/event.vue";
 import { RecycleScroller } from "vue-virtual-scroller";
 import { secureStorage, observeElement, presentToast } from "@/services/utils.js";
+import { mapActions,mapState  } from 'pinia'
+import { eventStore  } from '@/stores/eventStore'
 export default {
   name: "EventsList",
   components: {
@@ -84,6 +90,7 @@ export default {
     IonCard,
     IonSpinner,
     RecycleScroller,
+    IonMenuButton
   },
   data() {
     return {
@@ -96,6 +103,9 @@ export default {
       totalPages:0,
       page: 0,
     };
+  },
+  computed: {
+    ...mapState(eventStore,['menu']),
   },
   created() {
     if (navigator.geolocation) {
@@ -115,6 +125,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(eventStore,['setMenu']),
     async searchEvents(reset=false) {
       if(reset){
         this.page=0
@@ -218,6 +229,13 @@ export default {
         this.page++
         this.searchEvents()
       }
+    },
+    getMenuStatus(){
+      console.log(window.innerWidth)
+      if(window.innerWidth<992){
+        return true
+      }
+      return this.menu.name==='navigation'
     }
   },
 };

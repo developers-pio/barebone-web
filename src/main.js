@@ -31,7 +31,10 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 import Default from '@/layouts/default.vue';
 import Main from '@/layouts/main.vue';
 
-const app = createApp(App).use(IonicVue).use(router);
+import { createPinia } from 'pinia'
+const pinia = createPinia()
+
+const app = createApp(App).use(IonicVue).use(router).use(pinia);
 app.component('default-layout',Default)
 app.component('main-layout',Main)
 
