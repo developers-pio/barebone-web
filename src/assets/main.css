@@ -300,3 +300,21 @@ ion-tab-button {
 .native-input.sc-ion-input-ios{
     padding-left: 17px;
 }
+ion-select.filter-class {
+    --color: var(--ion-color-dark);
+    --placeholder-color: var(--ion-color-dark);
+    
+    border-radius: 50px !important;
+    /* padding-left: -10px !important; */
+    /* padding-right: 21px; */
+    background-color: var(--ion-color-light);
+    /* --opacity: 0.3; */
+    /* --border-color: rgba(255,255,255,0.3); */
+    /* outline:none; */
+    /* border: #fff 5px; */
+    min-height: 40px;
+}
+
+/* ion-select::part( .select-outline-container){
+    display: none!important;
+} */

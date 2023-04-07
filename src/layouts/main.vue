@@ -1,12 +1,13 @@
 <template>
   <ion-split-pane content-id="main-content">
     <ion-menu content-id="main-content" type="overlay" menu-id="main-menu">
+    
+
       <ion-content v-if="menu.name === 'filter' && menu.active">
         <ion-img
-          class="ion-padding-bottom main-logo"
-          :src="require('@/assets/icons/logo.svg')"
-        ></ion-img>
-        filters
+            class="ion-padding-bottom main-logo"
+            :src="require('@/assets/icons/logo.svg')"
+          ></ion-img>
         <div>
           <ion-row
             ><ion-col size="12">
@@ -31,6 +32,10 @@
                 aria-label="Units"
                 interface="popover"
                 placeholder="Units"
+                fill="outline"
+                shape="round"
+                class="filter-class"
+                
               >
                 <ion-select-option value="Miles">Miles</ion-select-option>
                 <ion-select-option value="KM">KM</ion-select-option>
@@ -80,7 +85,7 @@
              
 
               <ion-datetime-button
-                datetime="endDate"
+                datetime="edatetime"
                 calss="dateTimeField"
                 style="display: none"
                 ><slot name="date-target"></slot
@@ -113,6 +118,10 @@
                 aria-label="Units"
                 interface="popover"
                 placeholder="Include Family"
+                fill="outline"
+                shape="round"
+                class="filter-class"
+                
                 
               >
                 <ion-select-option value="Yes">Yes</ion-select-option>
@@ -141,7 +150,7 @@
           <ion-img
             class="ion-padding-bottom main-logo"
             :src="require('@/assets/icons/logo.svg')"
-          ></ion-img>
+          ></ion-img>         
 
           <ion-menu-toggle
             auto-hide="false"
