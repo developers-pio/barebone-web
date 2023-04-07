@@ -3,13 +3,13 @@ import SecureStorage from "secure-web-storage";
 // import CryptoJS from "crypto-js";
 
 const presentToast = async function (
-  position = "top" | "middle" | "bottom",
+  position = "top",
   message,
   status
 ) {
   const toast = await toastController.create({
     message: `${message}`,
-    duration: 1500,
+    duration: 3000,
     position: position,
     color: status,
     cssClass: "toast-custom-class",
@@ -43,4 +43,23 @@ const secureStorage=function() {
   });
 }
 
-export { presentToast,secureStorage  };
+const intersectionHandler = (isIntersectingFn) =>
+  function handleIntersection(entries) {
+    entries.forEach((entry) => {
+      isIntersectingFn(entry)
+    })
+  }
+
+function observeElement(
+  element,
+  isIntersectingFn,
+  options
+) {
+  const handleIntersection = intersectionHandler(isIntersectingFn)
+  const observer = new IntersectionObserver(handleIntersection, options)
+  observer.observe(element)
+}
+
+export default {  }
+
+export { presentToast,secureStorage, observeElement };

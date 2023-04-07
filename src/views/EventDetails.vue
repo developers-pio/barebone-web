@@ -152,8 +152,8 @@
             </p>
           </div>
           <div class="ion-padding">
-            <ion-button color="primary">Save</ion-button>
-            <ion-button color="light">Cancel</ion-button>
+            <ion-button color="primary" @click="addToCalender">Add to Calender</ion-button>
+            <ion-button color="light" @click="rejectEvent">Reject Event</ion-button>
           </div>
         </template>
       </ion-card>
@@ -186,6 +186,7 @@ import {
   logoFacebook,
   wifiOutline,
 } from "ionicons/icons";
+import {secureStorage, presentToast} from '@/services/utils'
 export default {
   components: {
     IonPage,
@@ -248,6 +249,47 @@ export default {
       } else if (socialMedia === "instagram") {
         return logoInstagram;
       }
+    },
+    rejectEvent() {
+      let events = secureStorage().getItem("events");
+      if (events) {
+        events.rejectedEvents.push({ id: this.eventDetails.id, app: "ticketmaster" });
+      } else {
+        events = {
+          rejectedEvents: [{ id: this.eventDetails.id, app: "ticketmaster" }],
+          calenderEvents: [],
+        };
+      }
+      presentToast("top", "Event Rejected", "danger");
+      secureStorage().setItem("events", events);
+      this.$router.push('/events')
+    },
+    addToCalender() {
+      let events = secureStorage().getItem("events");
+      if (events) {
+        events.calenderEvents.push({
+          id: this.eventDetails.id,
+          app: "ticketmaster",
+          name: this.eventDetails.name,
+          url: this.eventDetails.url,
+        });
+        secureStorage().setItem("events", events);
+      } else {
+        events = {
+          rejectedEvents: [],
+          calenderEvents: [
+            {
+              id: this.eventDetails.id,
+              app: "ticketmaster",
+              name: this.eventDetails.name,
+              url: this.eventDetails.url,
+            },
+          ],
+        };
+      }
+      presentToast("top", "Event Added to Calender", "success");
+      secureStorage().setItem("events", events);
+      this.$router.push('/events')
     },
   },
 };
