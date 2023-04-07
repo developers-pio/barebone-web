@@ -15,6 +15,8 @@
         aria-label="Dual Knobs Range"
         :dual-knobs="true"
         :pin="true"
+        :ticks="true"
+        :snaps="true"
         v-model="item.range"
         @ion-change="changeRange($event,item)" 
         max="23"
