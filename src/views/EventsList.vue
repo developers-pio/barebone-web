@@ -132,9 +132,9 @@ export default {
       if(reset){
         this.page=0
       }
-      if (
-        Intl.DateTimeFormat().resolvedOptions().timeZone.includes("America")
-      ) {
+      // if (
+      //   Intl.DateTimeFormat().resolvedOptions().timeZone.includes("America")
+      // ) {
         this.errorText = null;
         const ticketMaster = await this.getTicketMasterData();
         if(ticketMaster.length===0){
@@ -147,10 +147,10 @@ export default {
         }else{
           this.allEvents = [...this.allEvents, ...ticketMaster];
         }
-      } else {
-        this.allEvents=[]
-        this.errorText = "No Event Available for the Location.";
-      }
+      // } else {
+      //   this.allEvents=[]
+      //   this.errorText = "No Event Available for the Location.";
+      // }
     },
     async getTicketMasterData() {
       const query = new URLSearchParams({

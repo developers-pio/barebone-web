@@ -1,5 +1,5 @@
 <template>
-  <ion-content style="height: 110%">
+  <div style="height: 110%">
     <h2 class="gray-color">Basic Information</h2>
     <div style="max-width: 660px; margin: 0 auto; padding-top: 20px">
       <ion-row
@@ -15,13 +15,6 @@
             class="customProfile"
             v-model="formData.firstName"
           ></ion-input>
-
-          <!-- <span
-                      slot="error"
-                      v-if="errors.email"
-                      style="color: white; padding-left: 15px"
-                      >{{ errors.email }}</span
-                    > -->
         </ion-col>
         <ion-col size="12">
           <label class="labelClassProfile">Last Name</label>
@@ -35,13 +28,6 @@
             class="customProfile"
             v-model="formData.lastName"
           ></ion-input>
-
-          <!-- <span
-                      slot="error"
-                      v-if="errors.email"
-                      style="color: white; padding-left: 15px"
-                      >{{ errors.email }}</span
-                    > -->
         </ion-col>
         <ion-col size="12">
           <label class="labelClassProfile">Date of Birth </label>
@@ -136,12 +122,11 @@
         </ion-col>
       </ion-row>
     </div>
-  </ion-content>
+  </div>
 </template>
 
 <script>
 import {
-  IonContent,
   IonInput,
   IonCol,
   IonRow,
@@ -159,7 +144,6 @@ import { presentToast } from "@/services/utils"
 export default {
   name: "BasicInformation",
   components: {
-    IonContent,
     IonInput,
     IonCol,
     IonRow,

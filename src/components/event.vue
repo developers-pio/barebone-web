@@ -4,7 +4,7 @@
       class="event-image-container"
       :style="`background-image: url('${event.images[0].url}')`"
     >
-      <div class="event-name-container ion-justify-content-between ion-padding-horizontal">
+      <div class="event-name-container ion-justify-content-between ion-padding">
         <div class="d-flex flex-column">
           <h3 class="ion-no-margin">{{ event.name }}</h3>
           <div

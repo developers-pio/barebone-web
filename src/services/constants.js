@@ -1,10 +1,10 @@
 export default {
   userStaticData: {
     location: "New York City",
-    dob: "2023-04-06",
+    dob: "1998-04-06",
     email: process.env.VUE_APP_EMAIL,
-    firstName: "Dummy",
-    lastName: "test",
+    firstName: "Developer",
+    lastName: "Aventi",
     availability: [
       {
         date: "2023-04-06",
