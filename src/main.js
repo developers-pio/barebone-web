@@ -34,7 +34,7 @@ import Main from '@/layouts/main.vue';
 import { createPinia } from 'pinia'
 const pinia = createPinia()
 
-const app = createApp(App).use(IonicVue).use(router).use(pinia);
+const app = createApp(App).use(IonicVue,{mode:"md"}).use(router).use(pinia);
 app.component('default-layout',Default)
 app.component('main-layout',Main)
 

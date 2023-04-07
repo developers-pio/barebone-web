@@ -1,5 +1,5 @@
 <template>
-  <ion-content>    
+  <div> 
     <h2 class="gray-color">What's your availability?</h2>
     <ion-card class="commonCardClass" v-for="(item) in cards" :key="item">
     <ion-card-header>
@@ -26,7 +26,7 @@
       </div>
     </ion-card-content>
   </ion-card>
-  </ion-content>
+  </div>
 </template>
 
 <script>
@@ -36,13 +36,12 @@ import {
   IonCardHeader,
   IonRange,
   IonButton,
-  IonContent,
   IonToggle
 } from "@ionic/vue";
 export default {
   props:{
     availability:{
-      type: Object,
+      type: Array,
       required: true
     }
   },
@@ -52,7 +51,6 @@ export default {
     IonCardHeader,
     IonRange,
     IonButton,
-    IonContent,
     IonToggle
   },
   data() {

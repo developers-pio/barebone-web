@@ -12,7 +12,7 @@
 }
 
 .login-page-background {
-    --background: url("/public/assets/green image.png") 0 0/100% 100% no-repeat;
+    --background: url("@/assets/images/greenBackground.png") 0 0/100% 100% no-repeat;
 
 }
 
@@ -313,11 +313,4 @@ ion-select.filter-class {
     border-radius: 50px !important;
     background-color: var(--ion-color-light);
     min-height: 40px;
-}
-
-ion-select::part(placeholder){
-    padding-left: 20px;
-}
-ion-select::part(icon){
-    margin-left: auto;
 }
