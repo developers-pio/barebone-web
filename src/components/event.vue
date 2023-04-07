@@ -1,10 +1,10 @@
 <template>
-  <ion-card button @click="$router.push(`/event/${event.id}`)">
+  <ion-card button @click="$router.push(`/event/${event.id}`)" style="margin: 10px 10px 0px 10px;">
     <div
       class="event-image-container"
       :style="`background-image: url('${event.images[0].url}')`"
     >
-      <div class="event-name-container ion-padding ion-justify-content-between">
+      <div class="event-name-container ion-justify-content-between ion-padding-horizontal">
         <div class="d-flex flex-column">
           <h3 class="ion-no-margin">{{ event.name }}</h3>
           <div
@@ -12,34 +12,34 @@
             v-for="(classification, index) in event.classifications"
             :key="`classification-${index}`"
           >
-            <ion-chip
+            <ion-chip class="ellipsis-1"
               v-if="
                 classification.segment &&
                 classification.segment.name != 'Undefined'
               "
               >{{ classification.segment.name }}</ion-chip
             >
-            <ion-chip
+            <ion-chip class="ellipsis-1"
               v-if="
                 classification.genere &&
                 classification.genere.name != 'Undefined'
               "
               >{{ classification.genre.name }}</ion-chip
             >
-            <ion-chip
+            <ion-chip class="ellipsis-1"
               v-if="
                 classification.subGenre &&
                 classification.subGenre.name != 'Undefined'
               "
               >{{ classification.subGenre.name }}</ion-chip
             >
-            <ion-chip
+            <ion-chip class="ellipsis-1"
               v-if="
                 classification.type && classification.type.name != 'Undefined'
               "
               >{{ classification.type.name }}</ion-chip
             >
-            <ion-chip
+            <ion-chip class="ellipsis-1"
               v-if="
                 classification.subType &&
                 classification.subType.name != 'Undefined'
@@ -51,7 +51,7 @@
         <div class="d-flex flex-column">
           <div>{{ event.distance }} {{ event.units }}</div>
           <div>{{ getDate(event.dates.start.dateTime) }}</div>
-          <ion-chip style="width:fit-content;"
+          <ion-chip style="width:fit-content;" class="ellipsis-1"
               >TicketMaster</ion-chip
             >
         </div>

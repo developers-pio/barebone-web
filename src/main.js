@@ -38,6 +38,14 @@ const app = createApp(App).use(IonicVue).use(router).use(pinia);
 app.component('default-layout',Default)
 app.component('main-layout',Main)
 
+app.mixin({
+  computed:{
+    mobileView() {return window.innerWidth <=600},
+    tabView() {return window.innerWidth >600 && window.innerWidth <= 992},
+    desktopView() {return window.innerWidth > 992}
+  }
+})
+
 router.isReady().then(() => {
   app.mount("#app");
 });

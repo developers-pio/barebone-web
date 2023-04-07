@@ -1,17 +1,17 @@
 <template>
   <ion-split-pane content-id="main-content">
     <ion-menu content-id="main-content" type="overlay" menu-id="main-menu">
-    
-
-      <ion-content v-if="menu.name === 'filter' && menu.active">
+      <ion-content>
         <ion-img
-            class="ion-padding-bottom main-logo"
-            :src="require('@/assets/icons/logo.svg')"
-          ></ion-img>
-        <div>
+          class="ion-padding-vertical main-logo"
+          :src="require('@/assets/icons/logo.svg')"
+        ></ion-img>
+        <div v-if="menu.name === 'filter' && menu.active" class="ion-padding-horizontal">
+        <h2>Filters</h2>
           <ion-row
             ><ion-col size="12">
               <ion-input
+                v-model="filter.radius"
                 aria-label="Radius"
                 placeholder="Radius"
                 type="text"
@@ -19,16 +19,10 @@
                 autocomplete="none"
                 class="custom-filter"
               ></ion-input>
-
-              <!-- <span
-                      slot="error"
-                      v-if="errors.email"
-                      style="color: white; padding-left: 15px"
-                      >{{ errors.email }}</span
-                    > -->
             </ion-col>
             <ion-col size="12">
               <ion-select
+                v-model="filter.unit"
                 aria-label="Units"
                 interface="popover"
                 placeholder="Units"
@@ -37,17 +31,10 @@
                 class="filter-class"
                 
               >
-                <ion-select-option value="Miles">Miles</ion-select-option>
-                <ion-select-option value="KM">KM</ion-select-option>
-                <ion-select-option value="none">none</ion-select-option>
+                <ion-select-option aria-label="" value="">None</ion-select-option>
+                <ion-select-option aria-label="miles" value="miles">Miles</ion-select-option>
+                <ion-select-option aria-label="km" value="km">KM</ion-select-option>
               </ion-select>
-
-              <!-- <span
-            slot="error"
-            v-if="errors.email"
-            style="color: white; padding-left: 15px"
-            >{{ errors.email }}</span
-          > -->
             </ion-col>
             <ion-col size="12">
               <!-- <label class="labelClassProfile">S </label> -->
@@ -59,6 +46,7 @@
                 ><slot name="date-target"></slot
               ></ion-datetime-button>
               <ion-input
+                v-model="filter.startDateTime"
                 aria-label="startdate"
                 placeholder="Start Date Time"
                 type="text"
@@ -76,6 +64,7 @@
               >
                 <ion-datetime
                   id="sdatetime"
+                  v-model="filter.startDateTime"
                   presentation="date-time"
                   @ion-change="dismiss()"
                 ></ion-datetime>
@@ -91,6 +80,7 @@
                 ><slot name="date-target"></slot
               ></ion-datetime-button>
               <ion-input
+                v-model="filter.endDateTime"
                 aria-label="endDate"
                 placeholder="End Date Time"
                 type="text"
@@ -108,6 +98,7 @@
               >
                 <ion-datetime
                   id="edatetime"
+                  v-model="filter.endDateTime"
                   presentation="date-time"
                   @ion-change="dismiss()"
                 ></ion-datetime>
@@ -115,43 +106,28 @@
             </ion-col>
             <ion-col size="12">
               <ion-select
+                v-model="filter.includeFamily"
                 aria-label="Units"
                 interface="popover"
                 placeholder="Include Family"
                 fill="outline"
                 shape="round"
                 class="filter-class"
-                
-                
               >
-                <ion-select-option value="Yes">Yes</ion-select-option>
-                <ion-select-option value="No">No</ion-select-option>
-                <ion-select-option value="Only">Only</ion-select-option>
-                <ion-select-option value="none">none</ion-select-option>
+                <ion-select-option aria-label="" value="">None</ion-select-option>
+                <ion-select-option aria-label="yes" value="yes">Yes</ion-select-option>
+                <ion-select-option aria-label="no" value="no">No</ion-select-option>
+                <ion-select-option aria-label="only" value="only">Only</ion-select-option>
               </ion-select>
-
-              <!-- <span
-            slot="error"
-            v-if="errors.email"
-            style="color: white; padding-left: 15px"
-            >{{ errors.email }}</span
-          > -->
             </ion-col>
             <ion-col size="12">
               <ion-button color="primary"
             shape="round"
-            expand="block">Apply Filter</ion-button>
+            expand="block" @click="applyFilter">Apply Filter</ion-button>
             </ion-col>
           </ion-row>
         </div>
-      </ion-content>
-      <ion-content v-else>
-        <ion-list id="inbox-list" class="ion-padding-bottom">
-          <ion-img
-            class="ion-padding-bottom main-logo"
-            :src="require('@/assets/icons/logo.svg')"
-          ></ion-img>         
-
+        <ion-list v-else id="inbox-list" class="ion-padding-bottom">
           <ion-menu-toggle
             auto-hide="false"
             v-for="(p, i) in appPages"
@@ -192,7 +168,7 @@
         </ion-list>
       </ion-content>
     </ion-menu>
-    <ion-router-outlet id="main-content"></ion-router-outlet>
+    <ion-router-outlet id="main-content" :key="$route.fullPath"></ion-router-outlet>
   </ion-split-pane>
 </template>
 
@@ -212,14 +188,17 @@ import {
   IonSelectOption,
   IonDatetime,
   IonDatetimeButton,
-  IonModal
-  // IonRow,
-  // IonCol,
-  // IonInput
+  IonModal,
+  IonRow,
+  IonCol,
+  IonInput,
+  IonButton,
+  menuController
 } from "@ionic/vue";
 import { calendarOutline, personOutline, logOutOutline } from "ionicons/icons";
 import { mapState, mapActions } from "pinia";
 import { eventStore } from "@/stores/eventStore";
+import { presentToast  } from '@/services/utils'
 
 export default {
   name: "MainLayout",
@@ -238,10 +217,11 @@ export default {
     IonSelectOption,
     IonDatetime,
     IonDatetimeButton,
-    IonModal
-    // IonRow,
-    // IonCol,
-    // IonInput
+    IonModal,
+    IonRow,
+    IonCol,
+    IonInput,
+    IonButton
   },
   data() {
     return {
@@ -261,7 +241,7 @@ export default {
         },
       ],
       logOutOutline,
-      labels: ["Family", "Friends", "Notes", "Work", "Travel", "Reminders"],
+      filter:{}
     };
   },
   mounted() {
@@ -283,11 +263,16 @@ export default {
       this.$refs.modal1.$el.dismiss();
       this.$refs.modal2.$el.dismiss();
     },
-    ...mapActions(eventStore, ["setMenu"]),
+    ...mapActions(eventStore, ["setMenu",'setFilter']),
     signOut() {
-      localStorage.removeItem("loggedIn");
-      this.$router.push("/login");
+        localStorage.removeItem('loggedIn')
+        presentToast('top','Logged out Successfully','success')
+        this.$router.push('/login')
     },
+    applyFilter(){
+      this.setFilter(Object.assign({},this.filter))
+      menuController.toggle('main-menu')
+    }
   },
 };
 </script>
@@ -326,16 +311,6 @@ ion-menu.md ion-list#inbox-list ion-list-header {
   font-weight: 600;
 
   min-height: 20px;
-}
-
-ion-menu.md ion-list#labels-list ion-list-header {
-  font-size: 16px;
-
-  margin-bottom: 18px;
-
-  color: #757575;
-
-  min-height: 26px;
 }
 
 ion-menu.md ion-item {
@@ -387,10 +362,6 @@ ion-menu.ios ion-item.selected ion-icon {
 ion-menu.ios ion-item ion-icon {
   font-size: 24px;
   color: #73849a;
-}
-
-ion-menu.ios ion-list#labels-list ion-list-header {
-  margin-bottom: 8px;
 }
 
 ion-menu.ios ion-list-header,

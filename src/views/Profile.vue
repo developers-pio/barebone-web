@@ -2,12 +2,6 @@
   <ion-page>
     <header-component />
     <ion-content :fullscreen="true" class="ion-padding">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">{{ $route.params.id }}</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
         <div class="d-flex ion-justify-center">
           <ion-button
             tab="basicInfo"

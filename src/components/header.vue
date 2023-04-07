@@ -24,7 +24,6 @@ import { eventStore  } from '@/stores/eventStore'
         methods: {
           ...mapActions(eventStore,['setMenu']),
           openMainMenu() {
-            console.log('here')
             menuController.open('main-content-menu-id')
           }
         },

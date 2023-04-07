@@ -152,8 +152,8 @@
             </p>
           </div>
           <div class="ion-padding">
-            <ion-button color="primary" @click="addToCalender">Add to Calender</ion-button>
-            <ion-button color="light" @click="rejectEvent">Reject Event</ion-button>
+            <ion-button shape="round" color="primary" @click="addToCalender">Add to Calender</ion-button>
+            <ion-button shape="round" color="light" @click="rejectEvent">Reject Event</ion-button>
           </div>
         </template>
       </ion-card>
@@ -270,8 +270,10 @@ export default {
         events.calenderEvents.push({
           id: this.eventDetails.id,
           app: "ticketmaster",
-          name: this.eventDetails.name,
+          title: this.eventDetails.name,
           url: this.eventDetails.url,
+          start: this.eventDetails?.dates?.start || {},
+          end: this.eventDetails?.dates?.end || {}
         });
         secureStorage().setItem("events", events);
       } else {
@@ -281,8 +283,10 @@ export default {
             {
               id: this.eventDetails.id,
               app: "ticketmaster",
-              name: this.eventDetails.name,
+              title: this.eventDetails.name,
               url: this.eventDetails.url,
+              start: this.eventDetails?.dates?.start || {},
+              end: this.eventDetails?.dates?.end || {}
             },
           ],
         };

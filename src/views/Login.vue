@@ -20,6 +20,7 @@
                 autocomplete="none"
                 v-model="formData.email"
                 :error-text="errors.email"
+                type="email"
                 ><span
                   slot="error"
                   v-if="errors.email"
@@ -115,24 +116,24 @@ export default {
     "formData.email"(newVal) {
       this.errors.email = "";
       if (!newVal) {
-        this.errors.email = "Email Field is required";
+        this.errors.email = "Email Field is required.";
+      }else if(!/^\w+([\\.-]?\w+)*@\w+([\\.-]?\w+)*(\.\w{2,3})+$/.test(newVal)){
+        this.errors.email = "Please Enter a valid Email.";
       }
     },
     "formData.password"(newVal) {
       this.errors.password = "";
       if (!newVal) {
-        this.errors.password = "Password Field is required";
+        this.errors.password = "Password Field is required.";
       }
     },
   },
 
   methods: {
     formSubmit() {
-      // eslint-disable-next-line no-extra-boolean-cast
       if ([null, undefined, ""].includes(this.formData.email)) {
         this.errors.email = "Email Field is required";
       }
-      // eslint-disable-next-line no-extra-boolean-cast
       if ([null, undefined, ""].includes(this.formData.password)) {
         this.errors.password = "Password Field is required";
       }

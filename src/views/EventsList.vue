@@ -1,12 +1,7 @@
 <template>
   <ion-page>
     <header-component />
-    <ion-content :fullscreen="true" class="ion-padding">
-      <ion-header collapse="condense">
-        <ion-toolbar>
-          <ion-title size="large">{{ $route.params.id }}</ion-title>
-        </ion-toolbar>
-      </ion-header>
+    <ion-content :fullscreen="true" :class="!mobileView ? 'ion-padding' : 'ion-padding-vertical'">
       <div class="d-flex ion-justify-content-between">
         <ion-menu-button :auto-hide="false" color="primary" @click="setMenu({name:'filter',active: getMenuStatus()})">
             <ion-icon
@@ -26,9 +21,10 @@
           v-model="searchedEvent"
           debounce="500"
           @ion-input="searchEvents(true)"
+          :class="mobileView ? 'ion-margin-end' : ''"
         ></ion-input>
       </div>
-      <IonCard class="events-container d-flex flex-column">
+      <IonCard class="events-container d-flex flex-column" :class="mobileView ? 'ion-no-margin ion-margin-vertical' : ''">
         <h2 class="ion-margin ion-margin-vertical" v-if="errorText">
           {{ errorText }}
         </h2>
@@ -36,7 +32,7 @@
           <RecycleScroller
             class="ion-content-scroll-host scroller"
             :items="allEvents"
-            :item-size="416"
+            :item-size="410"
             key-field="id"
             v-slot="{ item, index }"
           >
@@ -44,11 +40,10 @@
               @reject-event="rejectEvent($event, index)"
               @add-to-calender="addToCalender($event, index)"
               :event="item"
-              class="ion-padding-bottom"
             />
           </RecycleScroller>
         </template>
-            <ion-spinner v-if="page < totalPages" color="medium" class="load-more-events" style="margin: 10px auto;"></ion-spinner>
+        <ion-spinner v-if="page < totalPages" color="medium" class="load-more-events" style="margin: 10px auto;"></ion-spinner>
       </IonCard>
     </ion-content>
   </ion-page>
@@ -58,14 +53,10 @@
 import {
   IonContent,
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonIcon,
   IonInput,
   IonCard,
   IonSpinner,
-  // IonMenu,
   IonMenuButton,
 } from "@ionic/vue";
 import { optionsOutline  } from "ionicons/icons";
@@ -80,9 +71,6 @@ export default {
   components: {
     IonContent,
     IonPage,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonIcon,
     IonInput,
     HeaderComponent,
@@ -104,8 +92,19 @@ export default {
       page: 0,
     };
   },
+  beforeUnmount(){
+      this.setMenu({name:'navigation',active: window.innerWidth < 992})
+  },
   computed: {
-    ...mapState(eventStore,['menu']),
+    ...mapState(eventStore,['menu','filter']),
+  },
+  watch:{
+    filter:{
+      handler(){
+        this.searchEvents(true)
+      },
+      deep:true
+    }
   },
   created() {
     if (navigator.geolocation) {
@@ -116,8 +115,8 @@ export default {
           // Call the function to search for events
           this.searchEvents(true);
         },
-        (error) => {
-          console.error(error);
+        () => {
+          this.errorText = "Please allow Location Permission for better results.";
         }
       );
     } else {
@@ -127,6 +126,9 @@ export default {
   methods: {
     ...mapActions(eventStore,['setMenu']),
     async searchEvents(reset=false) {
+      if(this.errorText && this.errorText==='Please allow Location Permission for better results.'){
+         return
+      }
       if(reset){
         this.page=0
       }
@@ -135,13 +137,18 @@ export default {
       ) {
         this.errorText = null;
         const ticketMaster = await this.getTicketMasterData();
-        if(reset){
+        if(ticketMaster.length===0){
+          this.allEvents=[]
+        this.errorText = "No Event Available.";
+        }
+        else if(reset){
           this.allEvents = ticketMaster
           observeElement(document.querySelector('.load-more-events'), this.isObserverIntersecting)
         }else{
           this.allEvents = [...this.allEvents, ...ticketMaster];
         }
       } else {
+        this.allEvents=[]
         this.errorText = "No Event Available for the Location.";
       }
     },
@@ -152,17 +159,25 @@ export default {
         page: this.page,
         sort: "name,asc",
         locale: "*",
-        keyword: this.searchedEvent
+        keyword: this.searchedEvent,
+        ...{
+          radius: this.filter.radius || '',
+          units: this.filter.units || '',
+          startDateTime: this.filter.startDateTime ? this.filter.startDateTime+'Z' : '',
+          endDateTime: this.filter.endDateTime ? this.filter.endDateTime+'Z' : '',
+          includeFamily: this.filter.includeFamily || '' 
+        }
       });
 
       const apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?${query}`;
       return fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
+          this.totalPages = data.page.totalPages
           let events = [];
           const savedEvents = secureStorage().getItem('events')
           if(savedEvents && savedEvents.calenderEvents && savedEvents.rejectedEvents){
-            data._embedded.events.forEach(ev=>{
+            (data?._embedded?.events || []).forEach(ev=>{
               const eventInCalender = savedEvents.calenderEvents.some(event=>event.id===ev.id)
               if(!eventInCalender){
                 const eventRejected = savedEvents.rejectedEvents.some(event=>event.id===ev.id)
@@ -172,12 +187,11 @@ export default {
               }
             })
           }else{
-            events=data._embedded.events
+            events=data?._embedded?.events || []
           }
-          this.totalPages = data.page.totalPages
           return events;
         })
-        .catch((error) => console.error(error));
+        .catch((error) => {return new Error(error)});
     },
     rejectEvent(event) {
       this.allEvents= this.allEvents.filter(ev=>ev.id!==event.id)
@@ -231,7 +245,6 @@ export default {
       }
     },
     getMenuStatus(){
-      console.log(window.innerWidth)
       if(window.innerWidth<992){
         return true
       }
@@ -243,8 +256,5 @@ export default {
 <style>
 .scroller {
   height: 100%;
-}
-.vue-recycle-scroller__item-view {
-  padding: 10px 0px;
 }
 </style>
