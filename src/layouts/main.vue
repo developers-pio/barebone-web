@@ -105,22 +105,6 @@
               </ion-modal>
             </ion-col>
             <ion-col size="12">
-              <ion-select
-                v-model="filter.includeFamily"
-                aria-label="Units"
-                interface="popover"
-                placeholder="Include Family"
-                fill="outline"
-                shape="round"
-                class="filter-class"
-              >
-                <ion-select-option aria-label="" value="">None</ion-select-option>
-                <ion-select-option aria-label="yes" value="yes">Yes</ion-select-option>
-                <ion-select-option aria-label="no" value="no">No</ion-select-option>
-                <ion-select-option aria-label="only" value="only">Only</ion-select-option>
-              </ion-select>
-            </ion-col>
-            <ion-col size="12">
               <ion-button color="primary"
             shape="round"
             expand="block" @click="applyFilter">Apply Filter</ion-button>

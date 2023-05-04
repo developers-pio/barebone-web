@@ -21,7 +21,7 @@
             <p>{{ eventDetails.name }}</p>
 
             <h2>Start Date and Time:</h2>
-            <p>{{ getDate(eventDetails.dates.start.dateTime) }}</p>
+            <p>{{ getDate(eventDetails.dates.start.dateTime || eventDetails.dates.start.localDate) }}</p>
 
             <h2>Tags:</h2>
             <div
@@ -152,8 +152,8 @@
             </p>
           </div>
           <div class="ion-padding">
-            <ion-button shape="round" color="primary" @click="addToCalender">Add to Calender</ion-button>
-            <ion-button shape="round" color="light" @click="rejectEvent">Reject Event</ion-button>
+            <ion-button shape="round" color="light" >Not for me</ion-button>
+            <ion-button shape="round" color="primary" >Add to Calender</ion-button>
           </div>
         </template>
       </ion-card>
@@ -221,6 +221,7 @@ export default {
   },
   methods: {
     getDate(val) {
+      console
       const dateObject = new Date(val);
       const options = {
         weekday: "short",

@@ -24,7 +24,7 @@
           :class="mobileView ? 'ion-margin-end' : ''"
         ></ion-input>
       </div>
-      <IonCard class="events-container d-flex flex-column" :class="mobileView ? 'ion-no-margin ion-margin-vertical' : ''">
+      <IonCard class="d-flex flex-column" :class="mobileView ? 'ion-no-margin ion-margin-vertical' : ''">
         <h2 class="ion-margin ion-margin-vertical" v-if="errorText">
           {{ errorText }}
         </h2>
@@ -32,7 +32,7 @@
           <RecycleScroller
             class="ion-content-scroll-host scroller"
             :items="allEvents"
-            :item-size="410"
+            :item-size="510"
             key-field="id"
             v-slot="{ item, index }"
           >
@@ -43,7 +43,7 @@
             />
           </RecycleScroller>
         </template>
-        <ion-spinner v-if="page < totalPages" color="medium" class="load-more-events" style="margin: 10px auto;"></ion-spinner>
+        <ion-spinner v-if="totalPages > 0 && page < totalPages-1" color="medium" class="load-more-events" style="margin: 10px auto;"></ion-spinner>
       </IonCard>
     </ion-content>
   </ion-page>
@@ -110,6 +110,7 @@ export default {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log(position)
           this.latitude = position.coords.latitude;
           this.longitude = position.coords.longitude;
           // Call the function to search for events
@@ -157,7 +158,6 @@ export default {
         apikey: "02CT2Qgtn6XAEQwCqsPb2Hd7yXQZx19H",
         latlong: `${this.latitude},${this.longitude}`,
         page: this.page,
-        sort: "name,asc",
         locale: "*",
         keyword: this.searchedEvent,
         ...{
@@ -165,7 +165,6 @@ export default {
           units: this.filter.units || '',
           startDateTime: this.filter.startDateTime ? this.filter.startDateTime+'Z' : '',
           endDateTime: this.filter.endDateTime ? this.filter.endDateTime+'Z' : '',
-          includeFamily: this.filter.includeFamily || '' 
         }
       });
 
