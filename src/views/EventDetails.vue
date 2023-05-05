@@ -10,17 +10,50 @@
           <div class="event-image-container">
             <img :src="eventDetails?.images[0]?.url" alt="Event Image" />
           </div>
-          <ion-item>
-              <ion-title><ion-icon :icon="locationOutline"></ion-icon>Jamshedpur, Jharkhand, India</ion-title>
+          <ion-item class="ion-no-padding">
+              <ion-icon class="ion-margin-end ion-margin-start" :icon="locationOutline"></ion-icon>
+              <ion-label style="white-space: pre-wrap;">
+                {{
+                  eventDetails._embedded.venues[0]
+                    ? `${
+                        eventDetails?._embedded?.venues[0]?.address?.line1 || ""
+                      }, ${
+                        eventDetails?._embedded?.venues[0]?.city?.name || ""
+                      }, ${
+                        eventDetails?._embedded?.venues[0]?.state?.name || ""
+                      }, ${
+                        eventDetails?._embedded?.venues[0]?.country?.name || ""
+                      }`
+                    : "NA"
+                }}
+              </ion-label>
+          </ion-item>
+          <ion-item class="ion-no-padding">
+              <ion-icon class="ion-margin-end ion-margin-start" :icon="informationCircleOutline"></ion-icon>
+              <ion-label style="white-space: pre-wrap;">
+                {{ eventDetails.info || "NA" }}
+              </ion-label>
           </ion-item>
           <div class="event-info-container">
-            <h2>Event Name:</h2>
-            <p>{{ eventDetails.name }}</p>
+            <ion-item class="ion-no-padding">
+              <ion-icon class="ion-margin-start ion-margin-end" :icon="micOutline"></ion-icon>
+              <ion-label style="white-space: pre-wrap;">{{ eventDetails.name }}</ion-label>
+            </ion-item>
+            <!-- <h2>Event Name:</h2> -->
 
-            <h2>Start Date and Time:</h2>
-            <p>{{ getDate(eventDetails.dates.start.dateTime || eventDetails.dates.start.localDate) }}</p>
-
-            <h2>Tags:</h2>
+            <ion-item>
+            <ion-icon class="ion-margin-start ion-margin-end" :icon="calendarClearOutline"></ion-icon>
+            <ion-label>
+              {{
+                getDate(
+                  eventDetails.dates.start.dateTime ||
+                    eventDetails.dates.start.localDate
+                )
+              }}
+            </ion-label>
+          </ion-item>
+            <ion-item>
+            <h2>#</h2>
             <div
               class="d-flex"
               v-for="(classification, index) in eventDetails.classifications ||
@@ -32,45 +65,49 @@
                   classification.segment &&
                   classification.segment.name != 'Undefined'
                 "
-                >{{ classification.segment.name }}</ion-chip
+                >#{{ classification.segment.name }}</ion-chip
               >
               <ion-chip
                 v-if="
                   classification.genere &&
                   classification.genere.name != 'Undefined'
                 "
-                >{{ classification.genre.name }}</ion-chip
+                >#{{ classification.genre.name }}</ion-chip
               >
               <ion-chip
                 v-if="
                   classification.subGenre &&
                   classification.subGenre.name != 'Undefined'
                 "
-                >{{ classification.subGenre.name }}</ion-chip
+                >#{{ classification.subGenre.name }}</ion-chip
               >
               <ion-chip
                 v-if="
                   classification.type && classification.type.name != 'Undefined'
                 "
-                >{{ classification.type.name }}</ion-chip
+                >#{{ classification.type.name }}</ion-chip
               >
               <ion-chip
                 v-if="
                   classification.subType &&
                   classification.subType.name != 'Undefined'
                 "
-                >{{ classification.subType.name }}</ion-chip
+                >#{{ classification.subType.name }}</ion-chip
               >
             </div>
-            <h2>Info:</h2>
+          </ion-item>
+            <!-- <h2>Info:</h2>
             <p>
               {{ eventDetails.info || "NA" }}
-            </p>
-            <h2>Promoter:</h2>
-            <p>
-              {{ eventDetails?.promoter?.name || "NA" }}
-            </p>
-            <h2>Price Range:</h2>
+            </p> -->
+            <ion-item>
+              <ion-icon class="ion-margin-start ion-margin-end" :icon="personRemoveOutline"></ion-icon>
+              <ion-label>
+                {{ eventDetails?.promoter?.name || "NA" }}
+              </ion-label>
+            </ion-item>
+            <!-- <h2>Promoter:</h2> -->
+            <h2>$:</h2>
             <p>
               {{
                 eventDetails.priceRanges && eventDetails.priceRanges[0]
@@ -79,24 +116,37 @@
               }}
             </p>
             <template v-if="eventDetails._embedded.venues">
-              <h2>Venue Name:</h2>
+              <!-- <h2>Venue Name:</h2>
               <p>
-                {{ eventDetails?._embedded?.venues[0]?.name || '' }}
-              </p>
-              <h2>Venue Location:</h2>
+                {{ eventDetails?._embedded?.venues[0]?.name || "" }}
+              </p> -->
+              <!-- <h2>Venue Location:</h2>
               <p>
                 {{
                   eventDetails._embedded.venues[0]
-                    ? `${eventDetails?._embedded?.venues[0]?.address?.line1 || ''}, ${eventDetails?._embedded?.venues[0]?.city?.name || ''}, ${eventDetails?._embedded?.venues[0]?.state?.name || ''}, ${eventDetails?._embedded?.venues[0]?.country?.name || ''}`
+                    ? `${
+                        eventDetails?._embedded?.venues[0]?.address?.line1 || ""
+                      }, ${
+                        eventDetails?._embedded?.venues[0]?.city?.name || ""
+                      }, ${
+                        eventDetails?._embedded?.venues[0]?.state?.name || ""
+                      }, ${
+                        eventDetails?._embedded?.venues[0]?.country?.name || ""
+                      }`
                     : "NA"
                 }}
-              </p>
-              <h2>Venue Info:</h2>
+              </p> -->
+              <!-- <h2>Venue Info:</h2>
               <p>
                 {{ eventDetails.pleaseNote || "NA" }}
-              </p>
+              </p> -->
             </template>
-            <template v-if="eventDetails._embedded.attractions && eventDetails?._embedded?.attractions[0]">
+            <template
+              v-if="
+                eventDetails._embedded.attractions &&
+                eventDetails?._embedded?.attractions[0]
+              "
+            >
               <h2>Artist Info:</h2>
               <p>
                 <a
@@ -149,8 +199,10 @@
             </p>
           </div>
           <div class="ion-padding">
-            <ion-button shape="round" color="light" >Not for me</ion-button>
-            <ion-button shape="round" color="primary" >Add to Calender</ion-button>
+            <ion-button shape="round" color="light">Not for me</ion-button>
+            <ion-button shape="round" color="primary"
+              >Add to Calender</ion-button
+            >
           </div>
         </template>
       </ion-card>
@@ -172,8 +224,9 @@ import {
   IonRow,
   IonCol,
   IonItem,
+  IonTitle,
 } from "@ionic/vue";
-import { locationOutline } from "ionicons/icons";
+import { locationOutline, informationCircleOutline, micOutline, calendarClearOutline, personRemoveOutline } from "ionicons/icons";
 import {
   logoYoutube,
   logoTwitter,
@@ -183,7 +236,7 @@ import {
   wifiOutline,
 } from "ionicons/icons";
 import FooterComponent from "@/components/footer.vue";
-import {secureStorage, presentToast} from '@/services/utils'
+import { secureStorage, presentToast } from "@/services/utils";
 export default {
   components: {
     IonPage,
@@ -198,11 +251,16 @@ export default {
     IonCol,
     FooterComponent,
     IonItem,
+    IonTitle,
   },
   data() {
     return {
       eventDetails: {},
-      locationOutline
+      locationOutline,
+      informationCircleOutline,
+      micOutline,
+      calendarClearOutline,
+      personRemoveOutline
     };
   },
   created() {
@@ -217,7 +275,7 @@ export default {
   },
   methods: {
     getDate(val) {
-      console
+      console;
       const dateObject = new Date(val);
       const options = {
         weekday: "short",
@@ -250,7 +308,10 @@ export default {
     rejectEvent() {
       let events = secureStorage().getItem("events");
       if (events) {
-        events.rejectedEvents.push({ id: this.eventDetails.id, app: "ticketmaster" });
+        events.rejectedEvents.push({
+          id: this.eventDetails.id,
+          app: "ticketmaster",
+        });
       } else {
         events = {
           rejectedEvents: [{ id: this.eventDetails.id, app: "ticketmaster" }],
@@ -259,7 +320,7 @@ export default {
       }
       presentToast("top", "Event Rejected", "danger");
       secureStorage().setItem("events", events);
-      this.$router.push('/events')
+      this.$router.push("/events");
     },
     addToCalender() {
       let events = secureStorage().getItem("events");
@@ -270,7 +331,7 @@ export default {
           title: this.eventDetails.name,
           url: this.eventDetails.url,
           start: this.eventDetails?.dates?.start || {},
-          end: this.eventDetails?.dates?.end || {}
+          end: this.eventDetails?.dates?.end || {},
         });
         secureStorage().setItem("events", events);
       } else {
@@ -283,14 +344,14 @@ export default {
               title: this.eventDetails.name,
               url: this.eventDetails.url,
               start: this.eventDetails?.dates?.start || {},
-              end: this.eventDetails?.dates?.end || {}
+              end: this.eventDetails?.dates?.end || {},
             },
           ],
         };
       }
       presentToast("top", "Event Added to Calender", "success");
       secureStorage().setItem("events", events);
-      this.$router.push('/events')
+      this.$router.push("/events");
     },
   },
 };
@@ -308,7 +369,7 @@ export default {
 }
 
 .event-info-container {
-  padding: 0px 20px;
+  padding: 0px 5px;
 }
 
 .event-info-container h2 {
