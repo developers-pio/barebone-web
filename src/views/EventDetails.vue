@@ -10,7 +10,9 @@
           <div class="event-image-container">
             <img :src="eventDetails?.images[0]?.url" alt="Event Image" />
           </div>
-
+          <ion-item>
+              <ion-title><ion-icon :icon="locationOutline"></ion-icon>Jamshedpur, Jharkhand, India</ion-title>
+          </ion-item>
           <div class="event-info-container">
             <h2>Event Name:</h2>
             <p>{{ eventDetails.name }}</p>
@@ -160,12 +162,8 @@
 <script>
 import {
   IonPage,
-  // IonHeader,
-  // IonToolbar,
-  // IonButtons,
   IonBackButton,
   IonContent,
-  // IonTitle,
   IonCard,
   IonIcon,
   IonChip,
@@ -173,7 +171,9 @@ import {
   IonGrid,
   IonRow,
   IonCol,
+  IonItem,
 } from "@ionic/vue";
+import { locationOutline } from "ionicons/icons";
 import {
   logoYoutube,
   logoTwitter,
@@ -188,11 +188,7 @@ export default {
   components: {
     IonPage,
     IonContent,
-    // IonHeader,
-    // IonToolbar,
-    // IonButtons,
     IonBackButton,
-    // IonTitle,
     IonCard,
     IonIcon,
     IonChip,
@@ -200,11 +196,13 @@ export default {
     IonGrid,
     IonRow,
     IonCol,
-    FooterComponent
+    FooterComponent,
+    IonItem,
   },
   data() {
     return {
       eventDetails: {},
+      locationOutline
     };
   },
   created() {
