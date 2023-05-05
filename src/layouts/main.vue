@@ -10,31 +10,24 @@
         <h2>Filters</h2>
           <ion-row
             ><ion-col size="12">
-              <ion-input
+              <ion-label>Radius</ion-label>
+              <ion-range
+                aria-label="Range with ticks"
+                :dual-knobs="false"
+                :pin="true"
+                :ticks="true"
+                :snaps="true"
                 v-model="filter.radius"
-                aria-label="Radius"
-                placeholder="Radius"
-                type="text"
-                fill="outline"
-                autocomplete="none"
-                class="custom-filter"
-              ></ion-input>
+                max="1000"
+                Min="0"
+                step="50"
+              ></ion-range>
             </ion-col>
-            <ion-col size="12">
-              <ion-select
-                v-model="filter.unit"
-                aria-label="Units"
-                interface="popover"
-                placeholder="Units"
-                fill="outline"
-                shape="round"
-                class="filter-class"
-                
-              >
-                <ion-select-option aria-label="" value="">None</ion-select-option>
-                <ion-select-option aria-label="miles" value="miles">Miles</ion-select-option>
-                <ion-select-option aria-label="km" value="km">KM</ion-select-option>
-              </ion-select>
+            <ion-col size="12" class="">
+              <div class="d-flex">
+              <ion-button style="width: 50%" shape="round" :fill="filter.unit === 'mi' ? 'solid' : 'outline'" @click="filter.unit = 'mi'">Miles</ion-button>
+              <ion-button style="width: 50%" shape="round" :fill="filter.unit === 'km' ? 'solid' : 'outline'" @click="filter.unit = 'km'">Km</ion-button>
+            </div>
             </ion-col>
             <ion-col size="12">
               <!-- <label class="labelClassProfile">S </label> -->
@@ -168,8 +161,6 @@ import {
   IonSplitPane,
   IonImg,
   IonRouterOutlet,
-  IonSelect,
-  IonSelectOption,
   IonDatetime,
   IonDatetimeButton,
   IonModal,
@@ -177,7 +168,8 @@ import {
   IonCol,
   IonInput,
   IonButton,
-  menuController
+  menuController,
+  IonRange,
 } from "@ionic/vue";
 import { calendarOutline, personOutline, logOutOutline } from "ionicons/icons";
 import { mapState, mapActions } from "pinia";
@@ -197,15 +189,14 @@ export default {
     IonSplitPane,
     IonImg,
     IonRouterOutlet,
-    IonSelect,
-    IonSelectOption,
     IonDatetime,
     IonDatetimeButton,
     IonModal,
     IonRow,
     IonCol,
     IonInput,
-    IonButton
+    IonButton,
+    IonRange,
   },
   data() {
     return {
@@ -225,7 +216,9 @@ export default {
         },
       ],
       logOutOutline,
-      filter:{}
+      filter:{
+        unit: 'mi'
+      }
     };
   },
   mounted() {

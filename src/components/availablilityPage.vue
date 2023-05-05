@@ -12,6 +12,7 @@
 
     <ion-card-content>
       <ion-range
+        class="availability"
         aria-label="Dual Knobs Range"
         :dual-knobs="true"
         :pin="true"

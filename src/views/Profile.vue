@@ -27,6 +27,7 @@
         </div>
       <component :is="currentTab"></component>
     </ion-content>
+    <footer-component />
   </ion-page>
 </template>
 
@@ -44,6 +45,7 @@ import {
 import headerComponent from "@/components/header.vue";
 import BasicInfoPage from "@/components/BasicInfoPage.vue";
 import CalendarPage from "@/components/CalendarPage.vue";
+import FooterComponent from "@/components/footer.vue";
 
 export default {
   name: "ProfilePage",
@@ -59,6 +61,7 @@ export default {
     IonLabel,
     BasicInfoPage,
     CalendarPage,
+    FooterComponent,
   },
   data() {
     return {

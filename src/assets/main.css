@@ -333,19 +333,19 @@ ion-select.filter-class {
     transition: transform 120ms ease, background 120ms ease;
     }
     
-    ion-range::part(pin)::before {
+    ion-range.availability::part(pin)::before {
     content: none;
     }
     
-    ion-range::part(knob) {
+    ion-range.availability::part(knob) {
     background: var(--ion-color-primary);
     }
     
-    ion-range::part(bar) {
+    ion-range.availability::part(bar) {
     background: var(--ion-color-light);
     }
     
-    ion-range::part(bar-active) {
+    ion-range.availability::part(bar-active) {
     background: var(--ion-color-primary);
     }
     

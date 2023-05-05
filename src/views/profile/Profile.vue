@@ -1,6 +1,5 @@
 <template>
   <ion-page>
-    <header-component />
     <ion-content :fullscreen="true" class="ion-padding">
       <ion-header collapse="condense">
         <ion-toolbar>
@@ -32,6 +31,7 @@
     <calendar-page v-else /> -->
       </ion-tabs>
     </ion-content>
+    <footer-component />
   </ion-page>
 </template>
 
@@ -51,16 +51,15 @@ import {
   // IonIcon,
   // IonRouterOutlet,
 } from "@ionic/vue";
-import headerComponent from "@/components/header.vue";
 import BasicInfoPage from "./BasicInfoPage.vue";
 import CalendarPage from "./CalendarPage.vue";
+import FooterComponent from "@/components/footer.vue";
 
 export default {
   name: "ProfilePage",
   components: {
     IonContent,
     IonPage,
-    headerComponent,
     IonHeader,
     // IonTabs,
     IonToolbar,
@@ -74,6 +73,7 @@ export default {
     // IonTabs,
     BasicInfoPage,
     CalendarPage,
+    FooterComponent,
   },
   data() {
     return {

@@ -2,7 +2,7 @@
   <ion-card
     button
     @click="$router.push(`/event/${event.id}`)"
-    style="margin: 0px 5px; border-radius: 25px"
+    class="ion-no-margin"
   >
     <div
       class="event-image-container"
@@ -78,19 +78,27 @@ export default {
   },
   mounted() {
     const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
     const itemElement = this.$el.childNodes[0];
 
-    const deleteAnimation = createAnimation()
+    const deleteXAnimation = createAnimation()
       .addElement(this.$el)
       .duration(100)
       .easing("ease-out")
       .fromTo("width", "100%", 0);
 
-    const swipeGesture = createGesture({
+      const deleteYAnimation = createAnimation()
+      .addElement(this.$el)
+      .duration(100)
+      .easing("ease-out")
+      .fromTo("height", "100%", 0);
+
+    const swipeXGesture = createGesture({
       el: itemElement,
       threshold: 15,
       direction: "x",
       gestureName: "swipe-dismiss",
+      gesturePriority: 1,
       onMove: (ev) => {
         itemElement.style.transform = `translateX(${ev.deltaX}px)`;
       },
@@ -101,29 +109,69 @@ export default {
         if (ev.deltaX < -150) {
           itemElement.style.transform = `translate3d(-${windowWidth}px, 0, 0)`;
 
-          deleteAnimation.play();
+          deleteXAnimation.play();
 
-          deleteAnimation.onFinish(async () => {
+          deleteXAnimation.onFinish(async () => {
             this.$el.style.display = "none";
-            this.$emit("reject-event", this.event);
+            // this.$emit("reject-event", this.event);
           });
         }
         if (ev.deltaX > 150) {
           itemElement.style.transform = `translate3d(${windowWidth}px, 0, 0)`;
 
-          deleteAnimation.play();
+          deleteXAnimation.play();
 
-          deleteAnimation.onFinish(async () => {
+          deleteXAnimation.onFinish(async () => {
             this.$el.style.display = "none";
-            this.$emit("add-to-calender", this.event);
+            // this.$emit("add-to-calender", this.event);
           });
         } else {
           // Fly back to original position
           itemElement.style.transform = "";
         }
       },
-    });
-    swipeGesture.enable();
+    })
+    swipeXGesture.enable()
+
+    const swipeYGesture = createGesture({
+      el: itemElement,
+      threshold: 15,
+      direction: "y",
+      gesturePriority: 0,
+      gestureName: "pull-up",
+      onMove: (ev) => {
+        itemElement.style.transform = `translateY(${ev.deltaY}px)`;
+      },
+      onEnd: (ev) => {
+        itemElement.style.transition = "0.2s ease-out";
+
+        // Fly out the card if we cross the threshold of 150px
+        if (ev.deltaY < -100) {
+          itemElement.style.transform = `translate3d(0, -${windowHeight}px, 0)`;
+
+          deleteYAnimation.play();
+
+          deleteYAnimation.onFinish(async () => {
+            this.$el.style.display = "none";
+            // this.$emit("reject-event", this.event);
+          });
+        }
+        if (ev.deltaY > 100) {
+          itemElement.style.transform = `translate3d(0, ${windowHeight}px, 0)`;
+
+          deleteYAnimation.play();
+
+          deleteYAnimation.onFinish(async () => {
+            this.$el.style.display = "none";
+            // this.$emit("add-to-calender", this.event);
+          });
+        } else {
+          // Fly back to original position
+          itemElement.style.transform = "";
+        }
+      },
+    })
+    swipeYGesture.enable()
   },
   methods: {
     getDate(dates) {
@@ -147,7 +195,6 @@ export default {
       return date;
     },
     dConvert(val) {
-      console.log(val)
       const dateObject = new Date(val);
       const options = {
         weekday: "short",
@@ -204,7 +251,7 @@ export default {
 
 <style scoped>
 .event-image-container {
-  height: 500px;
+  height: calc(100vh - 120px);
   background-size: cover;
   background-position: center;
   position: relative;

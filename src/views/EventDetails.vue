@@ -1,18 +1,13 @@
 <template>
   <ion-page>
-    <ion-header>
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button defaultHref="/events"></ion-back-button>
-        </ion-buttons>
-        <ion-title>Event Details</ion-title>
-      </ion-toolbar>
-    </ion-header>
-
     <ion-content>
+      <div class="d-flex">
+        <ion-back-button class="" defaultHref="/events"></ion-back-button>
+        <ion-title class="ion-text-center">Details</ion-title>
+      </div>
       <ion-card>
         <template v-if="Object.keys(eventDetails).length">
-          <div class="event-image-container ion-padding-horizontal">
+          <div class="event-image-container">
             <img :src="eventDetails?.images[0]?.url" alt="Event Image" />
           </div>
 
@@ -158,18 +153,19 @@
         </template>
       </ion-card>
     </ion-content>
+    <footer-component />
   </ion-page>
 </template>
 
 <script>
 import {
   IonPage,
-  IonHeader,
-  IonToolbar,
-  IonButtons,
+  // IonHeader,
+  // IonToolbar,
+  // IonButtons,
   IonBackButton,
   IonContent,
-  IonTitle,
+  // IonTitle,
   IonCard,
   IonIcon,
   IonChip,
@@ -186,16 +182,17 @@ import {
   logoFacebook,
   wifiOutline,
 } from "ionicons/icons";
+import FooterComponent from "@/components/footer.vue";
 import {secureStorage, presentToast} from '@/services/utils'
 export default {
   components: {
     IonPage,
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonButtons,
+    // IonHeader,
+    // IonToolbar,
+    // IonButtons,
     IonBackButton,
-    IonTitle,
+    // IonTitle,
     IonCard,
     IonIcon,
     IonChip,
@@ -203,6 +200,7 @@ export default {
     IonGrid,
     IonRow,
     IonCol,
+    FooterComponent
   },
   data() {
     return {
