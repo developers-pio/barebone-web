@@ -1,31 +1,38 @@
 <template>
   <ion-page>
-    <ion-header class="ion-border" style="background-color: white; padding: 5px 6px; ">
+    <ion-header class="ion-border event-list-header-search">
       <div class="d-flex ion-justify-content-between ion-align-items-center">
         <ion-menu-button
           :auto-hide="false"
+          menu="main-menu"
           color="primary"
-          @click="setMenu({ name: 'filter', active: getMenuStatus() })"
         >
           <ion-icon
             aria-hidden="true"
             :ios="optionsOutline"
             :md="optionsOutline"
-            color="primary"
+            color="light"
             size="large"
           ></ion-icon>
         </ion-menu-button>
-        <ion-input
+        <ion-input v-show="showSearch"
           style="max-width: 300px"
           label=""
           placeholder="Search Events"
-          class="customProfile"
+          class="customProfile ion-margin-end"
           fill="outline"
           v-model="searchedEvent"
           debounce="500"
           @ion-input="searchEvents(true)"
-          :class="mobileView ? 'ion-margin-end' : ''"
         ></ion-input>
+        <ion-icon
+            @click="showSearch = !showSearch"
+            :ios="searchOutline"
+            :md="searchOutline"
+            color="light"
+            size="large"
+            style="margin-right:10px"
+          ></ion-icon>
       </div>
     </ion-header>
     <ion-content
@@ -38,24 +45,18 @@
           {{ errorText }}
         </h2>
         <template v-else>
-          <!-- <template
-            v-for="(item, index) in allEvents"
-            :key="index"
-          > -->
             <EventComponent
               v-if="allEvents.length > 0"
+              :class="currentClass"
+              :key="`event-${currentEventIndex}`"
               @reject-event="rejectEvent($event, index)"
               @add-to-calender="addToCalender($event, index)"
-              :event="allEvents[0]"
+              @next-card="setNextCard"
+              @previous-card="setPreviousCard"
+              :event="allEvents[this.currentEventIndex]"
+              :events-list-length="allEvents.length"
             />
-          <!-- </template> -->
         </template>
-        <!-- <ion-spinner
-          v-if="totalPages > 0 && page < totalPages - 1"
-          color="medium"
-          class="load-more-events"
-          style="margin: 10px auto"
-        ></ion-spinner> -->
       </IonCard>
     </ion-content>
     <footer-component />
@@ -70,15 +71,13 @@ import {
   IonIcon,
   IonInput,
   IonCard,
-  // IonSpinner,
   IonMenuButton,
 } from "@ionic/vue";
-import { optionsOutline } from "ionicons/icons";
+import { optionsOutline, searchOutline } from "ionicons/icons";
 import FooterComponent from "@/components/footer.vue";
 import EventComponent from "@/components/event.vue";
 import {
   secureStorage,
-  // observeElement,
   presentToast,
 } from "@/services/utils.js";
 import { mapActions, mapState } from "pinia";
@@ -92,7 +91,6 @@ export default {
     IonInput,
     EventComponent,
     IonCard,
-    // IonSpinner,
     IonMenuButton,
     FooterComponent,
     IonHeader
@@ -100,20 +98,19 @@ export default {
   data() {
     return {
       optionsOutline,
+      searchOutline,
       allEvents: [],
       errorText: null,
       searchedEvent: "",
       latitude: null,
       longitude: null,
-      totalPages: 0,
       page: 0,
+      showSearch: false,
+      currentClass:'from-bottom'
     };
   },
-  beforeUnmount() {
-    this.setMenu({ name: "navigation", active: window.innerWidth < 992 });
-  },
   computed: {
-    ...mapState(eventStore, ["menu", "filter"]),
+    ...mapState(eventStore, [ "filter","currentEventIndex","totalPages"]),
   },
   watch: {
     filter: {
@@ -142,7 +139,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(eventStore, ["setMenu"]),
+    ...mapActions(eventStore, ["setCurrentIndex","setTotalPages"]),
     async searchEvents(reset = false) {
       if (
         this.errorText &&
@@ -152,7 +149,7 @@ export default {
         return;
       }
       if (reset) {
-        this.page = 0;
+        this.page=0
       }
       // if (
       //   Intl.DateTimeFormat().resolvedOptions().timeZone.includes("America")
@@ -164,12 +161,11 @@ export default {
         this.errorText = "No Event Available.";
       } else if (reset) {
         this.allEvents = ticketMaster;
-        // observeElement(
-        //   document.querySelector(".load-more-events"),
-        //   this.isObserverIntersecting
-        // );
       } else {
         this.allEvents = [...this.allEvents, ...ticketMaster];
+      }
+      if(reset){
+        this.setCurrentIndex(0)
       }
       // } else {
       //   this.allEvents=[]
@@ -182,6 +178,7 @@ export default {
         latlong: `${this.latitude},${this.longitude}`,
         page: this.page,
         locale: "*",
+        sort:'date,asc',
         keyword: this.searchedEvent,
         ...{
           radius: this.filter.radius || "",
@@ -199,7 +196,7 @@ export default {
       return fetch(apiUrl)
         .then((response) => response.json())
         .then((data) => {
-          this.totalPages = data.page.totalPages;
+          this.setTotalPages(data.page.totalPages)
           let events = [];
           const savedEvents = secureStorage().getItem("events");
           if (
@@ -216,12 +213,12 @@ export default {
                   (event) => event.id === ev.id
                 );
                 if (!eventRejected) {
-                  events.push(ev);
+                  events.push(ev)
                 }
               }
             });
           } else {
-            events = data?._embedded?.events || [];
+            events = data?._embedded?.events || []
           }
           return events;
         })
@@ -231,6 +228,7 @@ export default {
     },
     rejectEvent(event) {
       this.allEvents = this.allEvents.filter((ev) => ev.id !== event.id);
+      this.setNextCard()
       let events = secureStorage().getItem("events");
       if (events) {
         events.rejectedEvents.push({ id: event.id, app: "ticketmaster" });
@@ -240,11 +238,12 @@ export default {
           calenderEvents: [],
         };
       }
-      presentToast("top", "Event Rejected", "danger");
+      presentToast("top", "Event discard", "danger");
       secureStorage().setItem("events", events);
     },
     addToCalender(event) {
       this.allEvents = this.allEvents.filter((ev) => ev.id !== event.id);
+      this.setNextCard()
       let events = secureStorage().getItem("events");
       if (events) {
         events.calenderEvents.push({
@@ -274,23 +273,52 @@ export default {
       presentToast("top", "Event Added to Calender", "success");
       secureStorage().setItem("events", events);
     },
-    isObserverIntersecting(entry) {
-      if (entry.isIntersecting) {
-        this.page++;
-        this.searchEvents();
+    setNextCard(){
+      this.currentClass="from-bottom"
+      if(this.currentEventIndex===this.allEvents.length-2 && this.page!==this.totalPages-1){
+        this.page++
+        this.searchEvents()
+      }
+      if(this.currentEventIndex===this.allEvents.length-1){
+        this.setCurrentIndex(0)
+      }else{
+        this.setCurrentIndex(this.currentEventIndex+1)
       }
     },
-    getMenuStatus() {
-      if (window.innerWidth < 992) {
-        return true;
-      }
-      return this.menu.name === "navigation";
+    setPreviousCard(){
+      this.currentClass="from-top"
+      this.setCurrentIndex(this.currentEventIndex-1)
     },
+    getImage(event) {
+      const image = event.images
+        ? event.images.reduce((prev, current) => {
+            const prevResolution = prev.width * prev.height;
+            const currentResolution = current.width * current.height;
+
+            return currentResolution > prevResolution ? current : prev;
+          })
+        : {};
+      return image?.url || "";
+    }
   },
 };
 </script>
 <style>
-.scroller {
-  height: 100%;
+.from-top{
+  animation: topToBottom 0.5s;
+  animation-iteration-count: 1;
 }
+@keyframes topToBottom {
+  from {transform: translateY(-100%);}
+  to {transform: translateY(0%);}
+}
+.from-bottom{
+  animation: bottomTOTop 0.5s;
+  animation-iteration-count: 1;
+}
+@keyframes bottomTOTop {
+  from {transform: translateY(100%);}
+  to {transform: translateY(0%);}
+}
+
 </style>

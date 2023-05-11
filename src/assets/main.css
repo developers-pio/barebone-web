@@ -348,4 +348,12 @@ ion-select.filter-class {
     ion-range.availability::part(bar-active) {
     background: var(--ion-color-primary);
     }
+
+.event-list-header-search{
+    background-color: rgba(0,0,0,0.1);
+    padding: 3px;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+}
     

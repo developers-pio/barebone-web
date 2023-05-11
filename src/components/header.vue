@@ -4,9 +4,7 @@
       <ion-buttons slot="start">
         <ion-menu-button
           color="primary"
-          @click="
-            setMenu({ name: 'navigation', active: menu.name === 'filter' })
-          "
+          menu="main-menu"
         ></ion-menu-button>
       </ion-buttons>
       <ion-title>{{ $route.name }}</ion-title>
@@ -32,11 +30,8 @@ import {
   IonButtons,
   IonMenuButton,
   IonTitle,
-  menuController,
 } from "@ionic/vue";
-import { mapActions, mapState } from "pinia";
 import { logOutOutline } from "ionicons/icons";
-import { eventStore } from "@/stores/eventStore";
 import { presentToast } from "@/services/utils";
 export default {
   name: "HeaderComponent",
@@ -52,14 +47,7 @@ export default {
     IonMenuButton,
     IonTitle,
   },
-  computed: {
-    ...mapState(eventStore, ["menu"]),
-  },
   methods: {
-    ...mapActions(eventStore, ["setMenu"]),
-    openMainMenu() {
-      menuController.open("main-content-menu-id");
-    },
     signOut() {
       localStorage.removeItem("loggedIn");
       presentToast("top", "Logged out Successfully", "success");

@@ -6,7 +6,7 @@
           class="ion-padding-vertical main-logo"
           :src="require('@/assets/icons/logo.svg')"
         ></ion-img>
-        <div v-if="menu.name === 'filter' && menu.active" class="ion-padding-horizontal">
+        <div class="ion-padding-horizontal">
         <h2>Filters</h2>
           <ion-row
             ><ion-col size="12">
@@ -30,8 +30,6 @@
             </div>
             </ion-col>
             <ion-col size="12">
-              <!-- <label class="labelClassProfile">S </label> -->
-
               <ion-datetime-button
                 datetime="sdatetime"
                 calss="dateTimeField"
@@ -101,63 +99,25 @@
               <ion-button color="primary"
             shape="round"
             expand="block" @click="applyFilter">Apply Filter</ion-button>
+              <!-- <ion-button color="light" class="ion-margin-top"
+            shape="round"
+            expand="block" @click="resetFilter">Reset Filter</ion-button> -->
             </ion-col>
           </ion-row>
         </div>
-        <ion-list v-else id="inbox-list" class="ion-padding-bottom">
-          <ion-menu-toggle
-            auto-hide="false"
-            v-for="(p, i) in appPages"
-            :key="i"
-          >
-            <ion-item
-              @click="selectedIndex = i"
-              router-direction="root"
-              :router-link="p.url"
-              lines="none"
-              detail="false"
-              class="hydrated"
-              :class="{ selected: selectedIndex === i }"
-            >
-              <ion-icon
-                aria-hidden="true"
-                slot="start"
-                :ios="p.iosIcon"
-                :md="p.mdIcon"
-              ></ion-icon>
-              <ion-label>{{ p.title }}</ion-label>
-            </ion-item>
-          </ion-menu-toggle>
-          <ion-item
-            @click="signOut"
-            lines="none"
-            detail="false"
-            class="hydrated"
-          >
-            <ion-icon
-              aria-hidden="true"
-              slot="start"
-              :ios="logOutOutline"
-              :md="logOutOutline"
-            ></ion-icon>
-            <ion-label>Sign Out</ion-label>
-          </ion-item>
-        </ion-list>
       </ion-content>
     </ion-menu>
-    <ion-router-outlet id="main-content" :key="$route.fullPath"></ion-router-outlet>
+    <keep-alive>
+      <ion-router-outlet id="main-content" :key="$route.fullPath"></ion-router-outlet>
+    </keep-alive>
   </ion-split-pane>
 </template>
 
 <script>
 import {
   IonContent,
-  IonIcon,
-  IonItem,
   IonLabel,
-  IonList,
   IonMenu,
-  IonMenuToggle,
   IonSplitPane,
   IonImg,
   IonRouterOutlet,
@@ -168,8 +128,8 @@ import {
   IonCol,
   IonInput,
   IonButton,
-  menuController,
   IonRange,
+  menuController
 } from "@ionic/vue";
 import { calendarOutline, personOutline, logOutOutline } from "ionicons/icons";
 import { mapState, mapActions } from "pinia";
@@ -180,12 +140,8 @@ export default {
   name: "MainLayout",
   components: {
     IonContent,
-    IonIcon,
-    IonItem,
     IonLabel,
-    IonList,
     IonMenu,
-    IonMenuToggle,
     IonSplitPane,
     IonImg,
     IonRouterOutlet,
@@ -240,7 +196,7 @@ export default {
       this.$refs.modal1.$el.dismiss();
       this.$refs.modal2.$el.dismiss();
     },
-    ...mapActions(eventStore, ["setMenu",'setFilter']),
+    ...mapActions(eventStore, ['setFilter']),
     signOut() {
         localStorage.removeItem('loggedIn')
         presentToast('top','Logged out Successfully','success')
@@ -249,7 +205,17 @@ export default {
     applyFilter(){
       this.setFilter(Object.assign({},this.filter))
       menuController.toggle('main-menu')
-    }
+    },
+    // resetFilter(){
+    //   this.filter={
+    //     unit: 'mi',
+    //     endDateTime:'',
+    //     startDateTime: '',
+    //     radius: 0,
+    //   }
+    //   this.dismiss()
+    //   this.setFilter(Object.assign({},this.filter))
+    // }
   },
 };
 </script>

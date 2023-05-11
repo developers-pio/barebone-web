@@ -11,47 +11,7 @@
       <div class="event-name-container ion-justify-content-between ion-padding">
         <div class="d-flex flex-column">
           <h4 class="ion-no-margin">{{ event.name }}</h4>
-          <!-- <div
-            class="d-flex"
-            v-for="(classification, index) in event.classifications"
-            :key="`classification-${index}`"
-          >
-            <ion-chip class="ellipsis-1"
-              v-if="
-                classification.segment &&
-                classification.segment.name != 'Undefined'
-              "
-              >{{ classification.segment.name }}</ion-chip
-            >
-            <ion-chip class="ellipsis-1"
-              v-if="
-                classification.genere &&
-                classification.genere.name != 'Undefined'
-              "
-              >{{ classification.genre.name }}</ion-chip
-            >
-            <ion-chip class="ellipsis-1"
-              v-if="
-                classification.subGenre &&
-                classification.subGenre.name != 'Undefined'
-              "
-              >{{ classification.subGenre.name }}</ion-chip
-            >
-            <ion-chip class="ellipsis-1"
-              v-if="
-                classification.type && classification.type.name != 'Undefined'
-              "
-              >{{ classification.type.name }}</ion-chip
-            >
-            <ion-chip class="ellipsis-1"
-              v-if="
-                classification.subType &&
-                classification.subType.name != 'Undefined'
-              "
-              >{{ classification.subType.name }}</ion-chip
-            >
-          </div> -->
-          <div class="venue">{{ getVenue(event || []) }}</div>
+          <div class="venue">{{ getVenue(event) }}</div>
           <div class="date">{{ getDate(event.dates) }}</div>
           <div class="time">{{ getTime(event.dates) }}</div>
           <div v-if="event.distance">
@@ -65,6 +25,8 @@
 
 <script>
 import { IonCard, createAnimation, createGesture } from "@ionic/vue";
+import {mapState} from 'pinia'
+import {eventStore} from '../stores/eventStore'
 export default {
   name: "EventComponent",
   props: {
@@ -72,9 +34,16 @@ export default {
       type: Object,
       required: true,
     },
+    eventsListLength:{
+      type: Number,
+      required:true
+    }
   },
   components: {
     IonCard,
+  },
+  computed: {
+    ...mapState(eventStore, ["menu","currentEventIndex"]),
   },
   mounted() {
     const windowWidth = window.innerWidth;
@@ -113,7 +82,7 @@ export default {
 
           deleteXAnimation.onFinish(async () => {
             this.$el.style.display = "none";
-            // this.$emit("reject-event", this.event);
+            this.$emit("reject-event", this.event);
           });
         }
         if (ev.deltaX > 150) {
@@ -123,7 +92,7 @@ export default {
 
           deleteXAnimation.onFinish(async () => {
             this.$el.style.display = "none";
-            // this.$emit("add-to-calender", this.event);
+            this.$emit("add-to-calender", this.event);
           });
         } else {
           // Fly back to original position
@@ -144,26 +113,27 @@ export default {
       },
       onEnd: (ev) => {
         itemElement.style.transition = "0.2s ease-out";
-
         // Fly out the card if we cross the threshold of 150px
-        if (ev.deltaY < -100) {
-          itemElement.style.transform = `translate3d(0, -${windowHeight}px, 0)`;
+          if (ev.deltaY < -50 && this.currentEventIndex!==this.eventsListLength-1) {
+            itemElement.style.transform = `translate3d(0, -${windowHeight}px, 0)`;
 
-          deleteYAnimation.play();
+            deleteYAnimation.play();
 
-          deleteYAnimation.onFinish(async () => {
-            this.$el.style.display = "none";
-            // this.$emit("reject-event", this.event);
-          });
-        }
-        if (ev.deltaY > 100) {
+            deleteYAnimation.onFinish(async () => {
+              
+                this.$el.style.display = "none";
+                this.$emit("next-card");
+            });
+          }
+        if (ev.deltaY > 50 && this.currentEventIndex!==0) {
           itemElement.style.transform = `translate3d(0, ${windowHeight}px, 0)`;
 
           deleteYAnimation.play();
 
           deleteYAnimation.onFinish(async () => {
-            this.$el.style.display = "none";
             // this.$emit("add-to-calender", this.event);
+              this.$el.style.display = "none";
+              this.$emit("previous-card");
           });
         } else {
           // Fly back to original position
@@ -251,7 +221,7 @@ export default {
 
 <style scoped>
 .event-image-container {
-  height: calc(100vh - 120px);
+  height: calc(100vh - 62px);
   background-size: cover;
   background-position: center;
   position: relative;
@@ -262,7 +232,7 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: transparent;
+  background-color: rgba(0,0,0,0.01);
   color: white;
   display: flex;
   gap: 10px;

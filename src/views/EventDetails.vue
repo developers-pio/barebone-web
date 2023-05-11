@@ -5,178 +5,179 @@
         <ion-back-button class="" defaultHref="/events"></ion-back-button>
         <ion-title class="ion-text-center">Details</ion-title>
       </div>
-      <ion-card>
+      <ion-card class="ion-no-margin">
         <template v-if="Object.keys(eventDetails).length">
-          <div class="event-image-container">
-            <img :src="eventDetails?.images[0]?.url" alt="Event Image" />
-          </div>
-          <ion-item class="ion-no-padding">
-              <ion-icon class="ion-margin-end ion-margin-start" :icon="locationOutline"></ion-icon>
-              <ion-label style="white-space: pre-wrap;">
+          <div class="event-info-container">
+            <div class="event-image-container">
+              <img :src="eventDetails?.images[0]?.url" alt="Event Image" />
+            </div>
+            <ion-item class="ion-no-padding">
+              <ion-icon
+                class="ion-margin-start ion-margin-end"
+                slot="start"
+                :icon="idCardOutline"
+              ></ion-icon>
+              <ion-label style="white-space: pre-wrap">{{
+                eventDetails.name
+              }}</ion-label>
+            </ion-item>
+            <ion-item class="ion-no-padding">
+              <ion-icon
+                class="ion-margin-end ion-margin-start"
+                slot="start"
+                :icon="locationOutline"
+              ></ion-icon>
+              <ion-label
+                style="white-space: pre-wrap"
+                v-if="eventDetails._embedded && eventDetails._embedded.venues"
+              >
                 {{
-                  eventDetails._embedded.venues[0]
-                    ? `${
-                        eventDetails?._embedded?.venues[0]?.address?.line1 || ""
-                      }, ${
-                        eventDetails?._embedded?.venues[0]?.city?.name || ""
-                      }, ${
-                        eventDetails?._embedded?.venues[0]?.state?.name || ""
-                      }, ${
-                        eventDetails?._embedded?.venues[0]?.country?.name || ""
-                      }`
+                  getVenue(eventDetails)
+                }}
+              </ion-label>
+              <ion-label style="white-space: pre-wrap" v-if="eventDetails.place">
+                {{
+                  eventDetails.place.address
+                    ? eventDetails.place.address.line1
                     : "NA"
                 }}
               </ion-label>
-          </ion-item>
-          <ion-item class="ion-no-padding">
-              <ion-icon class="ion-margin-end ion-margin-start" :icon="informationCircleOutline"></ion-icon>
-              <ion-label style="white-space: pre-wrap;">
-                {{ eventDetails.info || "NA" }}
-              </ion-label>
-          </ion-item>
-          <div class="event-info-container">
-            <ion-item class="ion-no-padding">
-              <ion-icon class="ion-margin-start ion-margin-end" :icon="micOutline"></ion-icon>
-              <ion-label style="white-space: pre-wrap;">{{ eventDetails.name }}</ion-label>
             </ion-item>
-            <!-- <h2>Event Name:</h2> -->
+            <ion-item class="ion-no-padding">
+              <ion-icon
+                class="ion-margin-end ion-margin-start"
+                slot="start"
+                :icon="informationCircleOutline"
+              ></ion-icon>
+              <ion-label style="white-space: pre-wrap">
+                {{ eventDetails.info || eventDetails.description || "NA" }}
+              </ion-label>
+            </ion-item>
 
-            <ion-item>
-            <ion-icon class="ion-margin-start ion-margin-end" :icon="calendarClearOutline"></ion-icon>
-            <ion-label>
-              {{
-                getDate(
-                  eventDetails.dates.start.dateTime ||
-                    eventDetails.dates.start.localDate
-                )
-              }}
-            </ion-label>
-          </ion-item>
-            <ion-item>
-            <h2>#</h2>
-            <div
-              class="d-flex"
-              v-for="(classification, index) in eventDetails.classifications ||
-              []"
-              :key="`classification-${index}`"
+            <ion-item class="ion-no-padding">
+              <ion-icon
+                class="ion-margin-start ion-margin-end"
+                slot="start"
+                :icon="calendarClearOutline"
+              ></ion-icon>
+              <ion-label>
+                {{ getDate(eventDetails.dates || {}) }}
+              </ion-label>
+            </ion-item>
+            <ion-item class="ion-no-padding">
+              <ion-icon
+                class="ion-margin-start ion-margin-end"
+                slot="start"
+                :icon="timeOutline"
+              ></ion-icon>
+              <ion-label>
+                {{ getTime(eventDetails.dates || {}) }}
+              </ion-label>
+            </ion-item>
+            <ion-item class="ion-no-padding">
+              <ion-icon
+                class="ion-margin-start ion-margin-end"
+                slot="start"
+                :icon="linkOutline"
+              ></ion-icon>
+              <ion-label style="white-space: pre-wrap">
+                <a
+                  v-if="eventDetails.url"
+                  :href="eventDetails.url"
+                  target="_blank"
+                >
+                  {{ eventDetails.url }}</a
+                >
+                <span v-else>NA</span>
+              </ion-label>
+            </ion-item>
+            <ion-item
+              class="ion-no-padding"
+              v-if="eventDetails.classifications"
             >
-              <ion-chip
-                v-if="
-                  classification.segment &&
-                  classification.segment.name != 'Undefined'
-                "
-                >#{{ classification.segment.name }}</ion-chip
+            <ion-icon
+                class="ion-margin-start ion-margin-end"
+                slot="start"
+                :icon="pricetagOutline"
+              ></ion-icon>
+              <div
+                class="d-flex" style="gap:10px;"
+                v-for="(
+                  classification, index
+                ) in eventDetails.classifications || []"
+                :key="`classification-${index}`"
               >
-              <ion-chip
-                v-if="
-                  classification.genere &&
-                  classification.genere.name != 'Undefined'
-                "
-                >#{{ classification.genre.name }}</ion-chip
-              >
-              <ion-chip
-                v-if="
-                  classification.subGenre &&
-                  classification.subGenre.name != 'Undefined'
-                "
-                >#{{ classification.subGenre.name }}</ion-chip
-              >
-              <ion-chip
-                v-if="
-                  classification.type && classification.type.name != 'Undefined'
-                "
-                >#{{ classification.type.name }}</ion-chip
-              >
-              <ion-chip
-                v-if="
-                  classification.subType &&
-                  classification.subType.name != 'Undefined'
-                "
-                >#{{ classification.subType.name }}</ion-chip
-              >
-            </div>
-          </ion-item>
-            <!-- <h2>Info:</h2>
-            <p>
-              {{ eventDetails.info || "NA" }}
-            </p> -->
-            <ion-item>
-              <ion-icon class="ion-margin-start ion-margin-end" :icon="personRemoveOutline"></ion-icon>
+                <ion-text
+                  color="dark"
+                  style="marin:0px 5px;"
+                  v-if="
+                    classification.segment &&
+                    classification.segment.name != 'Undefined'
+                  "
+                  >#{{ classification.segment.name }}</ion-text
+                >
+                <ion-text
+                  color="dark"
+                  style="marin:0px 5px;"
+                  v-if="
+                    classification.genere &&
+                    classification.genere.name != 'Undefined'
+                  "
+                  >#{{ classification.genre.name }}</ion-text
+                >
+                <ion-text
+                  color="dark"
+                  style="marin:0px 5px;"
+                  v-if="
+                    classification.subGenre &&
+                    classification.subGenre.name != 'Undefined'
+                  "
+                  >#{{ classification.subGenre.name }}</ion-text
+                >
+                <ion-text
+                  color="dark"
+                  style="marin:0px 5px;"
+                  v-if="
+                    classification.type &&
+                    classification.type.name != 'Undefined'
+                  "
+                  >#{{ classification.type.name }}</ion-text
+                >
+                <ion-text
+                  color="dark"
+                  style="marin:0px 5px;"
+                  v-if="
+                    classification.subType &&
+                    classification.subType.name != 'Undefined'
+                  "
+                  >#{{ classification.subType.name }}</ion-text
+                >
+              </div>
+            </ion-item>
+            <ion-item class="ion-no-padding">
+              <ion-icon
+                class="ion-margin-start ion-margin-end"
+                slot="start"
+                :icon="personCircleOutline"
+              ></ion-icon>
               <ion-label>
                 {{ eventDetails?.promoter?.name || "NA" }}
               </ion-label>
             </ion-item>
-            <!-- <h2>Promoter:</h2> -->
-            <h2>$:</h2>
-            <p>
-              {{
-                eventDetails.priceRanges && eventDetails.priceRanges[0]
-                  ? `${eventDetails.priceRanges[0].min} - ${eventDetails.priceRanges[0].max} ${eventDetails.priceRanges[0].currency}`
-                  : "NA"
-              }}
-            </p>
-            <template v-if="eventDetails._embedded.venues">
-              <!-- <h2>Venue Name:</h2>
-              <p>
-                {{ eventDetails?._embedded?.venues[0]?.name || "" }}
-              </p> -->
-              <!-- <h2>Venue Location:</h2>
-              <p>
+            <ion-item class="ion-no-padding">
+              <ion-icon
+                class="ion-margin-start ion-margin-end"
+                slot="start"
+                :icon="cashOutline"
+              ></ion-icon>
+              <ion-label>
                 {{
-                  eventDetails._embedded.venues[0]
-                    ? `${
-                        eventDetails?._embedded?.venues[0]?.address?.line1 || ""
-                      }, ${
-                        eventDetails?._embedded?.venues[0]?.city?.name || ""
-                      }, ${
-                        eventDetails?._embedded?.venues[0]?.state?.name || ""
-                      }, ${
-                        eventDetails?._embedded?.venues[0]?.country?.name || ""
-                      }`
+                  eventDetails.priceRanges && eventDetails.priceRanges[0] && (eventDetails.priceRanges[0].min || eventDetails.priceRanges[0].max)
+                    ? `${eventDetails.priceRanges[0].min} - ${eventDetails.priceRanges[0].max} ${eventDetails.priceRanges[0].currency}`
                     : "NA"
                 }}
-              </p> -->
-              <!-- <h2>Venue Info:</h2>
-              <p>
-                {{ eventDetails.pleaseNote || "NA" }}
-              </p> -->
-            </template>
-            <template
-              v-if="
-                eventDetails._embedded.attractions &&
-                eventDetails?._embedded?.attractions[0]
-              "
-            >
-              <h2>Artist Info:</h2>
-              <p>
-                <a
-                  :href="eventDetails?._embedded?.attractions[0]?.url"
-                  target="_blank"
-                  >{{ eventDetails?._embedded?.attractions[0]?.url }}</a
-                >
-              </p>
-
-              <h2>Artist Social Info:</h2>
-              <p class="d-flex" style="gap: 20px">
-                <template
-                  v-for="(data, socialMedia) in eventDetails?._embedded
-                    ?.attractions[0]?.externalLinks || {}"
-                  :key="socialMedia"
-                >
-                  <a :href="data[0].url" target="_blank">
-                    <ion-icon
-                      aria-hidden="true"
-                      :ios="getIcon(socialMedia)"
-                      :md="getIcon(socialMedia)"
-                      size="large"
-                      color="dark"
-                    ></ion-icon>
-                  </a>
-                </template>
-              </p>
-            </template>
-            <h2>Images:</h2>
-            <p>
+              </ion-label>
+            </ion-item>
               <ion-grid>
                 <ion-row>
                   <ion-col
@@ -196,11 +197,12 @@
                   </ion-col>
                 </ion-row>
               </ion-grid>
-            </p>
           </div>
           <div class="ion-padding">
-            <ion-button shape="round" color="light">Not for me</ion-button>
-            <ion-button shape="round" color="primary"
+            <ion-button shape="round" color="light" @click="rejectEvent"
+              >Not for me</ion-button
+            >
+            <ion-button shape="round" color="primary" @click="addToCalender"
               >Add to Calender</ion-button
             >
           </div>
@@ -218,16 +220,25 @@ import {
   IonContent,
   IonCard,
   IonIcon,
-  IonChip,
+  IonText,
   IonButton,
   IonGrid,
   IonRow,
   IonCol,
   IonItem,
   IonTitle,
+  IonLabel,
 } from "@ionic/vue";
-import { locationOutline, informationCircleOutline, micOutline, calendarClearOutline, personRemoveOutline } from "ionicons/icons";
 import {
+  locationOutline,
+  informationCircleOutline,
+  idCardOutline,
+  calendarClearOutline,
+  personCircleOutline,
+  timeOutline,
+  linkOutline,
+cashOutline,
+pricetagOutline,
   logoYoutube,
   logoTwitter,
   logoInstagram,
@@ -244,7 +255,7 @@ export default {
     IonBackButton,
     IonCard,
     IonIcon,
-    IonChip,
+    IonText,
     IonButton,
     IonGrid,
     IonRow,
@@ -252,15 +263,20 @@ export default {
     FooterComponent,
     IonItem,
     IonTitle,
+    IonLabel,
   },
   data() {
     return {
       eventDetails: {},
       locationOutline,
       informationCircleOutline,
-      micOutline,
+      idCardOutline,
       calendarClearOutline,
-      personRemoveOutline
+      personCircleOutline,
+      timeOutline,
+      linkOutline,
+      cashOutline,
+      pricetagOutline
     };
   },
   created() {
@@ -274,21 +290,76 @@ export default {
       .catch((error) => console.error(error));
   },
   methods: {
-    getDate(val) {
-      console;
+    getDate(dates) {
+      let date = "";
+      if (dates.start && (dates.start.dateTime || dates.start.localDate)) {
+        date += this.dConvert(dates.start.dateTime || dates.start.localDate);
+      }
+      if (dates.end && (dates.end.dateTime || dates.end.localDate)) {
+        date += `- ${this.dConvert(dates.end.dateTime || dates.end.localDate)}`;
+      }
+      return date;
+    },
+    getTime(dates) {
+      let date = "";
+      if (dates.start && dates.start.localTime) {
+        date += this.tConvert(dates.start.localTime);
+      }
+      if (dates.end && dates.end.localTime) {
+        date += `- ${this.tConvert(dates.end.localTime)}`;
+      }
+      return date;
+    },
+    dConvert(val) {
       const dateObject = new Date(val);
       const options = {
         weekday: "short",
         month: "short",
         day: "numeric",
-        hour: "numeric",
         year: "numeric",
-        minute: "numeric",
-        hour12: true,
       };
       const formatter = new Intl.DateTimeFormat("en-US", options);
       const formattedDate = formatter.format(dateObject);
       return formattedDate;
+    },
+    getVenue(event) {
+      const venue = event?._embedded?.venues?.[0] || {};
+      let address = "";
+      if (venue.name) {
+        address += `${venue.name}`;
+      }
+      if (venue.state) {
+        address += `, ${venue.state.name}`;
+      }
+      if (venue.country) {
+        address += `, ${venue.country.countryCode}`;
+      }
+      return address;
+    },
+    tConvert(time) {
+      // Check correct time format and split into components
+      time = time
+        .toString()
+        .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+      if (time.length > 1) {
+        // If time format correct
+        time = time.slice(1); // Remove full string match value
+        time[5] = +time[0] < 12 ? "AM" : "PM"; // Set AM/PM
+        time[0] = +time[0] % 12 || 12; // Adjust hours
+      }
+      return time.join(""); // return adjusted time or original string
+    },
+    getImage(event) {
+      const image = event.images
+        ? event.images.reduce((prev, current) => {
+            const prevResolution = prev.width * prev.height;
+            const currentResolution = current.width * current.height;
+
+            return currentResolution > prevResolution ? current : prev;
+          })
+        : {};
+      return image?.url || "";
     },
     getIcon(socialMedia) {
       if (socialMedia == "itunes") {
@@ -360,7 +431,7 @@ export default {
 <style scoped>
 .event-image-container {
   text-align: center;
-  margin: 20px 0;
+  margin: 10px 0;
 }
 
 .event-image-container img {
