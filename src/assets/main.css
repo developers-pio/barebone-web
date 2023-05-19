@@ -356,4 +356,9 @@ ion-select.filter-class {
     top: 0;
     z-index: 10;
 }
+.dp__theme_light{
+    --dp-border-radius: 25px !important;
+    --dp-icon-color: var(--ion-color-primary) !important;
+    --dp-primary-color: var(--ion-color-primary) !important;
+}
     

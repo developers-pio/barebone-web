@@ -18,6 +18,8 @@
     "@event-calendar/day-grid": "^0.17.0",
     "@ionic/vue": "^7.0.0",
     "@ionic/vue-router": "^7.0.0",
+    "@vuepic/vue-datepicker": "^5.1.0",
+    "axios": "^1.4.0",
     "core-js": "^3.6.5",
     "crypto-js": "^4.1.1",
     "ionicons": "^7.0.0",

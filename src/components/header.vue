@@ -30,6 +30,7 @@ import {
   IonButtons,
   IonMenuButton,
   IonTitle,
+  IonIcon
 } from "@ionic/vue";
 import { logOutOutline } from "ionicons/icons";
 import { presentToast } from "@/services/utils";
@@ -46,6 +47,7 @@ export default {
     IonButtons,
     IonMenuButton,
     IonTitle,
+    IonIcon
   },
   methods: {
     signOut() {

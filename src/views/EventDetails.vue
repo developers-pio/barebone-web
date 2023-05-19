@@ -9,7 +9,7 @@
         <template v-if="Object.keys(eventDetails).length">
           <div class="event-info-container">
             <div class="event-image-container">
-              <img :src="eventDetails?.images[0]?.url" alt="Event Image" />
+              <img :src="eventDetails?.image_url" alt="Event Image" />
             </div>
             <ion-item class="ion-no-padding">
               <ion-icon
@@ -18,7 +18,7 @@
                 :icon="idCardOutline"
               ></ion-icon>
               <ion-label style="white-space: pre-wrap">{{
-                eventDetails.name
+                eventDetails.title
               }}</ion-label>
             </ion-item>
             <ion-item class="ion-no-padding">
@@ -29,18 +29,9 @@
               ></ion-icon>
               <ion-label
                 style="white-space: pre-wrap"
-                v-if="eventDetails._embedded && eventDetails._embedded.venues"
+                v-if="eventDetails.venue"
               >
-                {{
-                  getVenue(eventDetails)
-                }}
-              </ion-label>
-              <ion-label style="white-space: pre-wrap" v-if="eventDetails.place">
-                {{
-                  eventDetails.place.address
-                    ? eventDetails.place.address.line1
-                    : "NA"
-                }}
+                {{ getVenue(eventDetails.venue) }}
               </ion-label>
             </ion-item>
             <ion-item class="ion-no-padding">
@@ -50,7 +41,7 @@
                 :icon="informationCircleOutline"
               ></ion-icon>
               <ion-label style="white-space: pre-wrap">
-                {{ eventDetails.info || eventDetails.description || "NA" }}
+                {{ eventDetails.description }}
               </ion-label>
             </ion-item>
 
@@ -60,9 +51,14 @@
                 slot="start"
                 :icon="calendarClearOutline"
               ></ion-icon>
-              <ion-label>
-                {{ getDate(eventDetails.dates || {}) }}
-              </ion-label>
+              <div class="d-flex ion-padding-vertical" style="flex-direction: column;padding: 10px 0px;">
+                <ion-label>
+                  {{ getDate(eventDetails.startDate, eventDetails.endDate) }}
+                </ion-label>
+                <ion-button shape="round" color="primary" size="medium" @click="addToCalender" v-if="!actionAlreadyDone"
+                >Add to Calender</ion-button
+              >
+              </div>
             </ion-item>
             <ion-item class="ion-no-padding">
               <ion-icon
@@ -71,7 +67,7 @@
                 :icon="timeOutline"
               ></ion-icon>
               <ion-label>
-                {{ getTime(eventDetails.dates || {}) }}
+                {{ getTime(eventDetails.startDate, eventDetails.endDate) }}
               </ion-label>
             </ion-item>
             <ion-item class="ion-no-padding">
@@ -91,68 +87,15 @@
                 <span v-else>NA</span>
               </ion-label>
             </ion-item>
-            <ion-item
-              class="ion-no-padding"
-              v-if="eventDetails.classifications"
-            >
-            <ion-icon
+            <ion-item class="ion-no-padding" v-if="eventDetails.tags">
+              <ion-icon
                 class="ion-margin-start ion-margin-end"
                 slot="start"
                 :icon="pricetagOutline"
               ></ion-icon>
-              <div
-                class="d-flex" style="gap:10px;"
-                v-for="(
-                  classification, index
-                ) in eventDetails.classifications || []"
-                :key="`classification-${index}`"
-              >
-                <ion-text
-                  color="dark"
-                  style="marin:0px 5px;"
-                  v-if="
-                    classification.segment &&
-                    classification.segment.name != 'Undefined'
-                  "
-                  >#{{ classification.segment.name }}</ion-text
-                >
-                <ion-text
-                  color="dark"
-                  style="marin:0px 5px;"
-                  v-if="
-                    classification.genere &&
-                    classification.genere.name != 'Undefined'
-                  "
-                  >#{{ classification.genre.name }}</ion-text
-                >
-                <ion-text
-                  color="dark"
-                  style="marin:0px 5px;"
-                  v-if="
-                    classification.subGenre &&
-                    classification.subGenre.name != 'Undefined'
-                  "
-                  >#{{ classification.subGenre.name }}</ion-text
-                >
-                <ion-text
-                  color="dark"
-                  style="marin:0px 5px;"
-                  v-if="
-                    classification.type &&
-                    classification.type.name != 'Undefined'
-                  "
-                  >#{{ classification.type.name }}</ion-text
-                >
-                <ion-text
-                  color="dark"
-                  style="marin:0px 5px;"
-                  v-if="
-                    classification.subType &&
-                    classification.subType.name != 'Undefined'
-                  "
-                  >#{{ classification.subType.name }}</ion-text
-                >
-              </div>
+              <ion-label style="white-space: pre-wrap">
+                {{ eventDetails.tags.length ? eventDetails.tags.join(" ") : 'NA' }}
+              </ion-label>
             </ion-item>
             <ion-item class="ion-no-padding">
               <ion-icon
@@ -161,7 +104,7 @@
                 :icon="personCircleOutline"
               ></ion-icon>
               <ion-label>
-                {{ eventDetails?.promoter?.name || "NA" }}
+                {{ eventDetails.promoter || 'NA' }}
               </ion-label>
             </ion-item>
             <ion-item class="ion-no-padding">
@@ -171,39 +114,13 @@
                 :icon="cashOutline"
               ></ion-icon>
               <ion-label>
-                {{
-                  eventDetails.priceRanges && eventDetails.priceRanges[0] && (eventDetails.priceRanges[0].min || eventDetails.priceRanges[0].max)
-                    ? `${eventDetails.priceRanges[0].min} - ${eventDetails.priceRanges[0].max} ${eventDetails.priceRanges[0].currency}`
-                    : "NA"
-                }}
+                {{ eventDetails.price || 'NA' }}
               </ion-label>
             </ion-item>
-              <ion-grid>
-                <ion-row>
-                  <ion-col
-                    size="12"
-                    size-md="6"
-                    size-lg="4"
-                    size-xl="3"
-                    v-for="image in eventDetails.images || []"
-                    :key="image.url"
-                    class="ion-padding-bottom"
-                  >
-                    <img
-                      :src="image.url"
-                      :alt="image.url"
-                      class="h-100 w-100"
-                    />
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
           </div>
           <div class="ion-padding">
-            <ion-button shape="round" color="light" @click="rejectEvent"
+            <ion-button shape="round" color="light" class="w-100" @click="rejectEvent" v-if="!actionAlreadyDone"
               >Not for me</ion-button
-            >
-            <ion-button shape="round" color="primary" @click="addToCalender"
-              >Add to Calender</ion-button
             >
           </div>
         </template>
@@ -220,11 +137,7 @@ import {
   IonContent,
   IonCard,
   IonIcon,
-  IonText,
   IonButton,
-  IonGrid,
-  IonRow,
-  IonCol,
   IonItem,
   IonTitle,
   IonLabel,
@@ -237,8 +150,8 @@ import {
   personCircleOutline,
   timeOutline,
   linkOutline,
-cashOutline,
-pricetagOutline,
+  cashOutline,
+  pricetagOutline,
   logoYoutube,
   logoTwitter,
   logoInstagram,
@@ -248,6 +161,8 @@ pricetagOutline,
 } from "ionicons/icons";
 import FooterComponent from "@/components/footer.vue";
 import { secureStorage, presentToast } from "@/services/utils";
+import axios from "@/service";
+import { eventQuery } from "@/constant";
 export default {
   components: {
     IonPage,
@@ -255,11 +170,7 @@ export default {
     IonBackButton,
     IonCard,
     IonIcon,
-    IonText,
     IonButton,
-    IonGrid,
-    IonRow,
-    IonCol,
     FooterComponent,
     IonItem,
     IonTitle,
@@ -268,6 +179,7 @@ export default {
   data() {
     return {
       eventDetails: {},
+      actionAlreadyDone: false,
       locationOutline,
       informationCircleOutline,
       idCardOutline,
@@ -276,37 +188,129 @@ export default {
       timeOutline,
       linkOutline,
       cashOutline,
-      pricetagOutline
+      pricetagOutline,
     };
   },
-  created() {
-    fetch(
-      `https://app.ticketmaster.com/discovery/v2/events/${this.$route.params.id}?apikey=02CT2Qgtn6XAEQwCqsPb2Hd7yXQZx19H`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        this.eventDetails = data;
-      })
-      .catch((error) => console.error(error));
+  async created() {
+    try {
+      if (this.$route.params.from === "tm") {
+        const { data } = await axios.get(
+          `https://app.ticketmaster.com/discovery/v2/events/${this.$route.params.id}?apikey=02CT2Qgtn6XAEQwCqsPb2Hd7yXQZx19H`
+        );
+
+        this.eventDetails = {
+          id: data.id,
+          title: data.name,
+          startDate:
+            data?.dates?.start?.dateTime ||
+            data?.dates?.start?.localDate ||
+            null,
+          endDate:
+            data?.dates?.end?.dateTime || data?.dates?.end?.localDate || null,
+          venue: data?._embedded?.venues?.[0] || data?.place || {},
+          image_url: this.getImage(data?.images || []),
+          distance: data.distance ? `${data.distance} ${data.units}` : null,
+          description: data?.info || data?.description || "NA",
+          url: data.url,
+          tags: (data.classifications || []).reduce((tags, classification) => {
+            if (
+              classification.genre &&
+              classification?.genre?.name !== "Undefined"
+            ) {
+              tags.push("#" + classification?.genre?.name);
+            }
+            if (
+              classification.segment &&
+              classification?.segment?.name !== "Undefined"
+            ) {
+              tags.push("#" + classification?.segment?.name);
+            }
+            if (
+              classification.subGenre &&
+              classification?.subGenre?.name !== "Undefined"
+            ) {
+              tags.push("#" + classification?.subGenre?.name);
+            }
+            if (
+              classification.type &&
+              classification?.type?.name !== "Undefined"
+            ) {
+              tags.push("#" + classification?.type?.name);
+            }
+            return tags;
+          }, []),
+          price: data.priceRanges
+            ? this.getCurrency(data?.priceRanges?.[0] || {})
+            : "NA",
+          promoter: data?.promoter?.name || "NA",
+          images: data.images,
+          from: "tm",
+        };
+      } else if (this.$route.params.from === "mu") {
+        const { data } = await axios.post("https://barebone-aventis.programmers.us/meetup.php", {
+          query: eventQuery(this.$route.params.id)
+        });
+        this.eventDetails = {
+          id: data?.data?.event?.id,
+          title: data?.data?.event?.title,
+          startDate: data?.data?.event?.dateTime,
+          endDate: data?.data?.event?.endDate,
+          venue: data?.data?.event?.venue || {},
+          image_url: data?.data?.event?.imageUrl || null,
+          description: data?.data?.event?.description || "NA",
+          url: data?.data?.event?.eventUrl || null,
+          tags: (data?.data?.event?.topics?.edges || []).reduce((tags, topic) => {
+            tags.push("#" + topic?.node?.name);
+            return tags;
+          }, []),
+          price: data.priceRanges
+            ? this.getCurrency(data?.priceRanges?.[0] || {})
+            : "NA",
+          promoter: data?.data?.event?.host?.name || "NA",
+          from: "mu",
+        };
+      }
+      const events = secureStorage().getItem("events");
+      if (events && events.calenderEvents) {
+        this.actionAlreadyDone = events.calenderEvents.some(
+          (event) => event.id === this.eventDetails.id
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
   },
   methods: {
-    getDate(dates) {
-      let date = "";
-      if (dates.start && (dates.start.dateTime || dates.start.localDate)) {
-        date += this.dConvert(dates.start.dateTime || dates.start.localDate);
+    getCurrency(currencyObject) {
+      let ticketPriceRange = "";
+      if (currencyObject && currencyObject.min) {
+        ticketPriceRange += currencyObject.min;
       }
-      if (dates.end && (dates.end.dateTime || dates.end.localDate)) {
-        date += `- ${this.dConvert(dates.end.dateTime || dates.end.localDate)}`;
+      if (currencyObject && currencyObject.max) {
+        ticketPriceRange += ` - ${currencyObject.max}`;
+      }
+      if (currencyObject.currency && ticketPriceRange) {
+        ticketPriceRange += ` ${currencyObject.currency}`;
+      }
+      return ticketPriceRange;
+    },
+    getDate(startDate, endDate) {
+      let date = "";
+      if (startDate) {
+        date += this.dConvert(startDate);
+      }
+      if (endDate) {
+        date += ` - ${this.dConvert(endDate)}`;
       }
       return date;
     },
-    getTime(dates) {
+    getTime(startTime, endTime) {
       let date = "";
-      if (dates.start && dates.start.localTime) {
-        date += this.tConvert(dates.start.localTime);
+      if (startTime) {
+        date += this.tConvert(startTime);
       }
-      if (dates.end && dates.end.localTime) {
-        date += `- ${this.tConvert(dates.end.localTime)}`;
+      if (endTime) {
+        date += ` - ${this.tConvert(endTime)}`;
       }
       return date;
     },
@@ -322,43 +326,41 @@ export default {
       const formattedDate = formatter.format(dateObject);
       return formattedDate;
     },
-    getVenue(event) {
-      const venue = event?._embedded?.venues?.[0] || {};
-      let address = "";
-      if (venue.name) {
-        address += `${venue.name}`;
+    getVenue(venue) {
+      let address = [];
+      if(venue.address && venue.address.line1){
+        address.push(venue.address.line1)
       }
-      if (venue.state) {
-        address += `, ${venue.state.name}`;
+      if (venue.name) {
+        address.push(venue.name)
+      }
+      if (venue.state || venue.city) {
+        address.push(venue?.state?.name || venue?.city?.name || venue.city)
       }
       if (venue.country) {
-        address += `, ${venue.country.countryCode}`;
+        address.push(venue?.country?.countryCode || venue?.country)
       }
-      return address;
+      return address.join(', ');
     },
     tConvert(time) {
-      // Check correct time format and split into components
-      time = time
-        .toString()
-        .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+      const datetime = new Date(time); // Replace with your datetime value
 
-      if (time.length > 1) {
-        // If time format correct
-        time = time.slice(1); // Remove full string match value
-        time[5] = +time[0] < 12 ? "AM" : "PM"; // Set AM/PM
-        time[0] = +time[0] % 12 || 12; // Adjust hours
-      }
-      return time.join(""); // return adjusted time or original string
+      const timeString = datetime.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: true,
+      });
+
+      return timeString;
     },
-    getImage(event) {
-      const image = event.images
-        ? event.images.reduce((prev, current) => {
-            const prevResolution = prev.width * prev.height;
-            const currentResolution = current.width * current.height;
+    getImage(images) {
+      const image = images.reduce((prev, current) => {
+        const prevResolution = prev.width * prev.height;
+        const currentResolution = current.width * current.height;
 
-            return currentResolution > prevResolution ? current : prev;
-          })
-        : {};
+        return currentResolution > prevResolution ? current : prev;
+      });
       return image?.url || "";
     },
     getIcon(socialMedia) {
@@ -381,11 +383,11 @@ export default {
       if (events) {
         events.rejectedEvents.push({
           id: this.eventDetails.id,
-          app: "ticketmaster",
+          from: this.eventDetails.from
         });
       } else {
         events = {
-          rejectedEvents: [{ id: this.eventDetails.id, app: "ticketmaster" }],
+          rejectedEvents: [{ id: this.eventDetails.id, from: this.eventDetails.from }],
           calenderEvents: [],
         };
       }
@@ -396,27 +398,13 @@ export default {
     addToCalender() {
       let events = secureStorage().getItem("events");
       if (events) {
-        events.calenderEvents.push({
-          id: this.eventDetails.id,
-          app: "ticketmaster",
-          title: this.eventDetails.name,
-          url: this.eventDetails.url,
-          start: this.eventDetails?.dates?.start || {},
-          end: this.eventDetails?.dates?.end || {},
-        });
+        events.calenderEvents.push(this.eventDetails);
         secureStorage().setItem("events", events);
       } else {
         events = {
           rejectedEvents: [],
           calenderEvents: [
-            {
-              id: this.eventDetails.id,
-              app: "ticketmaster",
-              title: this.eventDetails.name,
-              url: this.eventDetails.url,
-              start: this.eventDetails?.dates?.start || {},
-              end: this.eventDetails?.dates?.end || {},
-            },
+            this.eventDetails
           ],
         };
       }

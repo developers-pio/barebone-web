@@ -1,6 +1,6 @@
 <template>
   <ion-footer class="ion-border ion-hide-lg-up" :translucent="true">
-    <ion-toolbar>
+    <ion-toolbar color="dark">
       <div
         class="d-flex ion-margin ion-justify-content-between ion-padding-start ion-padding-end"
       >
@@ -16,10 +16,10 @@
         </ion-title>
         <ion-title
           @click="goToProfile"
-          :style="{ color: $route.name === 'Profile' ? '#195339' : '' }"
+          :style="{ color: $route.name === 'Calender' ? '#195339' : '' }"
           class="ion-padding-start ion-padding-end ion-text-center"
-          ><ion-icon class="ion-padding-end" :icon="peopleOutline"></ion-icon
-          >Profile</ion-title
+          ><ion-icon class="ion-padding-end" :icon="calendarOutline"></ion-icon
+          >Calender</ion-title
         >
       </div>
     </ion-toolbar>
@@ -28,7 +28,7 @@
 
 <script>
 import { IonFooter, IonToolbar, IonTitle, IonIcon } from "@ionic/vue";
-import { homeOutline, peopleOutline } from "ionicons/icons";
+import { homeOutline, calendarOutline } from "ionicons/icons";
 export default {
   name: "FooterComponent",
   components: {
@@ -42,13 +42,13 @@ export default {
         this.$router.push("/events")
     },
     goToProfile() {
-        this.$router.push("/profile")
+        this.$router.push("/calender")
     }
   },
   data() {
     return {
       homeOutline,
-      peopleOutline,
+      calendarOutline,
     };
   },
 };

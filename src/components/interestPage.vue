@@ -1,21 +1,23 @@
 <template>
-  <h2 class="gray-color">What interests you?</h2>
-  <ion-row v-for="(data, inter) in interestData" :key="inter" class="interest">
-    <ion-col>
-      <h3 class="gray-color">{{ inter }}</h3>
-      <br />
-      <div>
-        <ion-chip
-          :class="getActiveStatus(inter,val) ? 'active' : ''"
-          v-for="val in data"
-          :key="val"
-          @click="changeInterest(inter,val)"
-        >
-          {{ val }}
-        </ion-chip>
-      </div>
-    </ion-col>
-  </ion-row>
+  <div>
+    <h2 class="gray-color">What interests you?</h2>
+    <ion-row v-for="(data, inter) in interestData" :key="inter" class="interest">
+      <ion-col>
+        <h3 class="gray-color">{{ inter }}</h3>
+        <br />
+        <div>
+          <ion-chip
+            :class="getActiveStatus(inter,val) ? 'active' : ''"
+            v-for="val in data"
+            :key="val"
+            @click="changeInterest(inter,val)"
+          >
+            {{ val }}
+          </ion-chip>
+        </div>
+      </ion-col>
+    </ion-row>
+  </div>
 </template>
 
 <script>
@@ -29,7 +31,7 @@ export default {
   props: {
     interests:{
       type: Object,
-      required: true
+      default: ()=>{}
     }
   },
   emits: ["addInterests"],

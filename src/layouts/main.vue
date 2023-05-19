@@ -17,99 +17,38 @@
                 :pin="true"
                 :ticks="true"
                 :snaps="true"
-                v-model="filter.radius"
-                max="1000"
-                Min="0"
-                step="50"
+                v-model="filter.radiusIndex"
+                max="7"
+                min="0"
+                step="1"
+                :pin-formatter="pinFormatter"
               ></ion-range>
             </ion-col>
             <ion-col size="12" class="">
               <div class="d-flex">
-              <ion-button style="width: 50%" shape="round" :fill="filter.unit === 'mi' ? 'solid' : 'outline'" @click="filter.unit = 'mi'">Miles</ion-button>
               <ion-button style="width: 50%" shape="round" :fill="filter.unit === 'km' ? 'solid' : 'outline'" @click="filter.unit = 'km'">Km</ion-button>
+              <ion-button style="width: 50%" shape="round" :fill="filter.unit === 'mi' ? 'solid' : 'outline'" @click="filter.unit = 'mi'">Miles</ion-button>
             </div>
             </ion-col>
             <ion-col size="12">
-              <ion-datetime-button
-                datetime="sdatetime"
-                calss="dateTimeField"
-                style="display: none"
-                ><slot name="date-target"></slot
-              ></ion-datetime-button>
-              <ion-input
-                v-model="filter.startDateTime"
-                aria-label="startdate"
-                placeholder="Start Date Time"
-                type="text"
-                id="open-modal-start-date"
-                fill="outline"
-                autocomplete="none"
-                :readonly="true"
-                class="custom-filter"
-              ></ion-input>
-
-              <ion-modal
-                ref="modal1"
-                trigger="open-modal-start-date"
-                :keep-contents-mounted="true"
-              >
-                <ion-datetime
-                  id="sdatetime"
-                  v-model="filter.startDateTime"
-                  presentation="date-time"
-                  @ion-change="dismiss()"
-                ></ion-datetime>
-              </ion-modal>
+              <VueDatePicker v-model="filter.startDateTime" @clear-value="filter.startDateTime=null"></VueDatePicker>
             </ion-col>
             <ion-col size="12">
-             
-
-              <ion-datetime-button
-                datetime="edatetime"
-                calss="dateTimeField"
-                style="display: none"
-                ><slot name="date-target"></slot
-              ></ion-datetime-button>
-              <ion-input
-                v-model="filter.endDateTime"
-                aria-label="endDate"
-                placeholder="End Date Time"
-                type="text"
-                id="open-modal-end-date"
-                fill="outline"
-                autocomplete="none"
-                :readonly="true"
-                class="custom-filter"
-              ></ion-input>
-
-              <ion-modal
-                ref="modal2"
-                trigger="open-modal-end-date"
-                :keep-contents-mounted="true"
-              >
-                <ion-datetime
-                  id="edatetime"
-                  v-model="filter.endDateTime"
-                  presentation="date-time"
-                  @ion-change="dismiss()"
-                ></ion-datetime>
-              </ion-modal>
+              <VueDatePicker v-model="filter.endDateTime" @clear-value="filter.endDateTime=null"></VueDatePicker>
             </ion-col>
             <ion-col size="12">
               <ion-button color="primary"
             shape="round"
             expand="block" @click="applyFilter">Apply Filter</ion-button>
-              <!-- <ion-button color="light" class="ion-margin-top"
+              <ion-button color="light" class="ion-margin-top"
             shape="round"
-            expand="block" @click="resetFilter">Reset Filter</ion-button> -->
+            expand="block" @click="resetFilter">Reset Filter</ion-button>
             </ion-col>
           </ion-row>
         </div>
       </ion-content>
     </ion-menu>
-    <keep-alive>
       <ion-router-outlet id="main-content" :key="$route.fullPath"></ion-router-outlet>
-    </keep-alive>
   </ion-split-pane>
 </template>
 
@@ -121,20 +60,18 @@ import {
   IonSplitPane,
   IonImg,
   IonRouterOutlet,
-  IonDatetime,
-  IonDatetimeButton,
-  IonModal,
   IonRow,
   IonCol,
-  IonInput,
   IonButton,
   IonRange,
   menuController
 } from "@ionic/vue";
-import { calendarOutline, personOutline, logOutOutline } from "ionicons/icons";
-import { mapState, mapActions } from "pinia";
+import { logOutOutline } from "ionicons/icons";
+import { mapActions } from "pinia";
 import { eventStore } from "@/stores/eventStore";
 import { presentToast  } from '@/services/utils'
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 export default {
   name: "MainLayout",
@@ -145,57 +82,31 @@ export default {
     IonSplitPane,
     IonImg,
     IonRouterOutlet,
-    IonDatetime,
-    IonDatetimeButton,
-    IonModal,
     IonRow,
     IonCol,
-    IonInput,
     IonButton,
     IonRange,
+    VueDatePicker
   },
   data() {
     return {
-      selectedIndex: 0,
-      appPages: [
-        {
-          title: "Events",
-          url: "/events",
-          iosIcon: calendarOutline,
-          mdIcon: calendarOutline,
-        },
-        {
-          title: "Profile",
-          url: "/profile",
-          iosIcon: personOutline,
-          mdIcon: personOutline,
-        },
-      ],
       logOutOutline,
       filter:{
-        unit: 'mi'
-      }
+        unit: 'km',
+        endDateTime:'',
+        startDateTime: '',
+        radius: 25,
+        radiusIndex: 1
+      },
+      stepValues: [10, 25, 50, 100, 200, 400, 800, 1000]
     };
   },
-  mounted() {
-    const name = this.$route.name;
-    if (name !== undefined) {
-      this.selectedIndex = this.appPages.findIndex(
-        (page) => page.title.toLowerCase() === name.toLowerCase()
-      );
-    }
-  },
   computed: {
-    ...mapState(eventStore, ["menu"]),
     layout() {
       return `${this.$route.meta.layout || "default"}-layout`;
     },
   },
   methods: {
-    dismiss() {
-      this.$refs.modal1.$el.dismiss();
-      this.$refs.modal2.$el.dismiss();
-    },
     ...mapActions(eventStore, ['setFilter']),
     signOut() {
         localStorage.removeItem('loggedIn')
@@ -206,16 +117,20 @@ export default {
       this.setFilter(Object.assign({},this.filter))
       menuController.toggle('main-menu')
     },
-    // resetFilter(){
-    //   this.filter={
-    //     unit: 'mi',
-    //     endDateTime:'',
-    //     startDateTime: '',
-    //     radius: 0,
-    //   }
-    //   this.dismiss()
-    //   this.setFilter(Object.assign({},this.filter))
-    // }
+    resetFilter(){
+      this.filter={
+        unit: 'km',
+        endDateTime:'',
+        startDateTime: '',
+        radius: 25,
+        radiusIndex: 1
+      }
+      this.setFilter(Object.assign({},this.filter))
+    },
+    pinFormatter(val){
+      this.filter.radius = this.stepValues[val]
+      return this.stepValues[val]
+    }
   },
 };
 </script>

@@ -1,21 +1,18 @@
 import { defineStore } from 'pinia'
 export const eventStore = defineStore('event', {
     state: () => ({ 
-      menu: {name:'navigation',active:false},
-      filter:{},
-      currentEventIndex:17,
-      totalPages:0
+      filter:{
+        unit: 'km',
+        endDateTime:'',
+        startDateTime: '',
+        radius: 25,
+        radiusIndex: 1
+      },
+      currentEventIndex:0,
+      totalPages:0,
+      eventsList:[]
    }),
     actions: {
-      setMenu(menu){
-        if(menu.name==='filter' && menu.active===false){
-          this.menu = {name:'navigation',active:true}
-        }else if(menu.name==='filter' && menu.active===true){
-          this.menu={name:'filter',active:true}
-        }else if(menu.name==='navigation'){
-          this.menu = menu
-        }
-      },
       setFilter(filter){
         this.filter = filter
       },
@@ -24,6 +21,9 @@ export const eventStore = defineStore('event', {
       },
       setTotalPages(page){
         this.totalPages = page
-      }
+      },
+      setEventList(list){
+        this.eventsList= list.sort((a,b)=>new Date(a.startDate) - new Date(b.startDate))
+      },
     },
   })

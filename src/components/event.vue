@@ -1,22 +1,25 @@
 <template>
   <ion-card
     button
-    @click="$router.push(`/event/${event.id}`)"
+    @click="$router.push(`/event/${event.from}/${event.id}`)"
     class="ion-no-margin"
   >
     <div
       class="event-image-container"
-      :style="`background-image: url('${getImage(event)}')`"
+      :style="`background-image: url('${event.image_url ? event.image_url : '/img/event.jpg'}')`"
     >
       <div class="event-name-container ion-justify-content-between ion-padding">
         <div class="d-flex flex-column">
-          <h4 class="ion-no-margin">{{ event.name }}</h4>
-          <div class="venue">{{ getVenue(event) }}</div>
-          <div class="date">{{ getDate(event.dates) }}</div>
-          <div class="time">{{ getTime(event.dates) }}</div>
+          <h4 class="ion-no-margin">{{ event.title }}</h4>
+          <div class="venue">{{ getVenue(event.venue) }}</div>
+          <div class="date">{{ getDate(event.startDate, event.endDate) }}</div>
+          <div class="time">{{ getTime(event.startDate, event.endDate) }}</div>
           <div v-if="event.distance">
-            {{ event.distance }} {{ event.units }}
+            {{ event.distance }}
           </div>
+        </div>
+        <div class="d-flex ion-align-items-center">
+          <copy-modal :event-object="event" />
         </div>
       </div>
     </div>
@@ -27,6 +30,7 @@
 import { IonCard, createAnimation, createGesture } from "@ionic/vue";
 import {mapState} from 'pinia'
 import {eventStore} from '../stores/eventStore'
+import copyModal from '@/components/copyModal.vue';
 export default {
   name: "EventComponent",
   props: {
@@ -41,9 +45,10 @@ export default {
   },
   components: {
     IonCard,
+    copyModal
   },
   computed: {
-    ...mapState(eventStore, ["menu","currentEventIndex"]),
+    ...mapState(eventStore, ["currentEventIndex"]),
   },
   mounted() {
     const windowWidth = window.innerWidth;
@@ -143,24 +148,24 @@ export default {
     })
     swipeYGesture.enable()
   },
-  methods: {
-    getDate(dates) {
+  methods:{
+    getDate(startDate,endDate) {
       let date = "";
-      if (dates.start && (dates.start.dateTime || dates.start.localDate)) {
-        date += this.dConvert(dates.start.dateTime || dates.start.localDate);
+      if (startDate) {
+        date += this.dConvert(startDate);
       }
-      if (dates.end && (dates.end.dateTime || dates.end.localDate)) {
-        date += `- ${this.dConvert(dates.end.dateTime || dates.end.localDate)}`;
+      if (endDate) {
+        date += ` - ${this.dConvert(endDate)}`;
       }
       return date;
     },
-    getTime(dates) {
+    getTime(startTime, endTime) {
       let date = "";
-      if (dates.start && dates.start.localTime) {
-        date += this.tConvert(dates.start.localTime);
+      if (startTime) {
+        date += this.tConvert(startTime);
       }
-      if (dates.end && dates.end.localTime) {
-        date += `- ${this.tConvert(dates.end.localTime)}`;
+      if (endTime) {
+        date += ` - ${this.tConvert(endTime)}`;
       }
       return date;
     },
@@ -176,46 +181,35 @@ export default {
       const formattedDate = formatter.format(dateObject);
       return formattedDate;
     },
-    getVenue(event) {
-      const venue = event?._embedded?.venues?.[0] || {};
-      let address = "";
-      if (venue.name) {
-        address += `${venue.name}`;
+    getVenue(venue) {
+      let address = [];
+      if(venue.address && venue.address.line1){
+        address.push(venue.address.line1)
       }
-      if (venue.state) {
-        address += `, ${venue.state.name}`;
+      if (venue.name) {
+        address.push(venue.name)
+      }
+      if (venue.state || venue.city) {
+        address.push(venue?.state?.name || venue?.city?.name || venue.city)
       }
       if (venue.country) {
-        address += `, ${venue.country.countryCode}`;
+        address.push(venue?.country?.countryCode || venue?.country)
       }
-      return address;
+      return address.join(', ');
     },
     tConvert(time) {
-      // Check correct time format and split into components
-      time = time
-        .toString()
-        .match(/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+      const datetime = new Date(time); // Replace with your datetime value
 
-      if (time.length > 1) {
-        // If time format correct
-        time = time.slice(1); // Remove full string match value
-        time[5] = +time[0] < 12 ? "AM" : "PM"; // Set AM/PM
-        time[0] = +time[0] % 12 || 12; // Adjust hours
-      }
-      return time.join(""); // return adjusted time or original string
-    },
-    getImage(event) {
-      const image = event.images
-        ? event.images.reduce((prev, current) => {
-            const prevResolution = prev.width * prev.height;
-            const currentResolution = current.width * current.height;
+      const timeString = datetime.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric',
+        hour12: true
+      });
 
-            return currentResolution > prevResolution ? current : prev;
-          })
-        : {};
-      return image?.url || "";
+      return timeString
     },
-  },
+  }
 };
 </script>
 
@@ -225,6 +219,7 @@ export default {
   background-size: cover;
   background-position: center;
   position: relative;
+  
 }
 
 .event-name-container {
@@ -232,7 +227,7 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0,0,0,0.01);
+  background-color: rgba(0,0,0,0.5);
   color: white;
   display: flex;
   gap: 10px;
