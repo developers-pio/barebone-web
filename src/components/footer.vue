@@ -6,17 +6,19 @@
       >
         <ion-title
           @click="goToHome"
-          :style="{ color: $route.name === 'Events' ? '#195339' : '' }"
+          :color="$route.name === 'Events' ? 'primary' : 'light'"
+          style="font-weight: 500 !important"
           class="ion-padding-start ion-padding-end ion-text-center"
           ><ion-icon class="ion-padding-end" :icon="homeOutline"></ion-icon
           >Home</ion-title
         >
-        <ion-title class="ion-padding-start ion-padding-end ion-text-center">
+        <ion-title class="ion-padding-start ion-padding-end ion-text-center" color="light">
           |
         </ion-title>
         <ion-title
           @click="goToProfile"
-          :style="{ color: $route.name === 'Calender' ? '#195339' : '' }"
+          :color="$route.name === 'Calender' ? 'primary' : 'light'"
+          style="font-weight: 500 !important"
           class="ion-padding-start ion-padding-end ion-text-center"
           ><ion-icon class="ion-padding-end" :icon="calendarOutline"></ion-icon
           >Calender</ion-title

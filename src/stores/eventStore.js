@@ -10,7 +10,11 @@ export const eventStore = defineStore('event', {
       },
       currentEventIndex:0,
       totalPages:0,
-      eventsList:[]
+      eventsList:[],
+      geoLocation:{
+        latitude: null,
+        longitude:null
+      }
    }),
     actions: {
       setFilter(filter){
@@ -25,5 +29,8 @@ export const eventStore = defineStore('event', {
       setEventList(list){
         this.eventsList= list.sort((a,b)=>new Date(a.startDate) - new Date(b.startDate))
       },
+      setLatLong(geoLocation){
+        this.geoLocation = geoLocation
+      }
     },
   })

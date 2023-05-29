@@ -69,12 +69,13 @@ import {
 import { logOutOutline } from "ionicons/icons";
 import { mapActions } from "pinia";
 import { eventStore } from "@/stores/eventStore";
-import { presentToast  } from '@/services/utils'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import loadScript from '@/Mixins/loadScript'
 
 export default {
   name: "MainLayout",
+  mixins:[loadScript],
   components: {
     IonContent,
     IonLabel,
@@ -106,13 +107,11 @@ export default {
       return `${this.$route.meta.layout || "default"}-layout`;
     },
   },
+  mounted(){
+    this.loadScripts()
+  },
   methods: {
     ...mapActions(eventStore, ['setFilter']),
-    signOut() {
-        localStorage.removeItem('loggedIn')
-        presentToast('top','Logged out Successfully','success')
-        this.$router.push('/login')
-    },
     applyFilter(){
       this.setFilter(Object.assign({},this.filter))
       menuController.toggle('main-menu')
@@ -130,7 +129,7 @@ export default {
     pinFormatter(val){
       this.filter.radius = this.stepValues[val]
       return this.stepValues[val]
-    }
+    },
   },
 };
 </script>

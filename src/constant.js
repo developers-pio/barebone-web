@@ -53,7 +53,17 @@ export const keywordSearchQuery = `query eventKeywordSearch($first: Int, $after:
                 id
                 name
             }
+            topics {
+                edges {
+                    cursor
+                    node {
+                        urlkey
+                        name
+                        id
+                    }
                 }
+            }
+            priceTier
                 }
                 }
             }
@@ -113,6 +123,17 @@ export const categorySearchQuery = `query categorySearch($lat: Float!, $lon: Flo
                 id
                 name
             }
+            topics {
+                edges {
+                    cursor
+                    node {
+                        urlkey
+                        name
+                        id
+                    }
+                }
+            }
+            priceTier
         }
       }
     }
