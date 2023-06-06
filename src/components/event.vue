@@ -155,7 +155,7 @@ export default {
     });
     swipeXGesture.enable();
 
-    const swipeYGesture = createGesture({
+    createGesture({
       el: itemElement,
       threshold: 15,
       direction: "y",
@@ -196,7 +196,7 @@ export default {
         }
       },
     });
-    swipeYGesture.enable();
+    // swipeYGesture.enable();
   },
   methods: {
     getEndDate(startDate) {

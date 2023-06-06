@@ -26,7 +26,6 @@ import '@/assets/main.css'
 
 import './registerServiceWorker'
 
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 // Layouts
 import Default from '@/layouts/default.vue';
 import Main from '@/layouts/main.vue';

@@ -15,8 +15,6 @@
     "@capacitor/haptics": "4.1.0",
     "@capacitor/keyboard": "4.1.1",
     "@capacitor/status-bar": "4.1.1",
-    "@event-calendar/core": "^0.17.0",
-    "@event-calendar/day-grid": "^0.17.0",
     "@ionic/vue": "^7.0.0",
     "@ionic/vue-router": "^7.0.0",
     "@vuepic/vue-datepicker": "^5.1.0",
@@ -27,9 +25,9 @@
     "pinia": "^2.0.33",
     "register-service-worker": "^1.7.1",
     "secure-web-storage": "^1.0.2",
+    "swiper": "^9.3.2",
     "vue": "^3.2.47",
-    "vue-router": "^4.1.6",
-    "vue-virtual-scroller": "^2.0.0-beta.8"
+    "vue-router": "^4.1.6"
   },
   "devDependencies": {
     "@capacitor/cli": "4.7.3",
