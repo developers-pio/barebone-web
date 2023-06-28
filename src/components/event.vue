@@ -113,7 +113,6 @@ export default {
             },
           };
           const events = secureStorage().getItem("events");
-          console.log(events?.calenderEvents)
           const conditionOne = (events?.calenderEvents || []).some(
             (event) => event.id === this.event.id && event.from === this.event.from
           );
@@ -130,12 +129,10 @@ export default {
               deleteXAnimation.play();
 
               deleteXAnimation.onFinish(async () => {
-                // console.log(this.event);
 
                 window.gapi.client.calendar.events.insert(
                   calenderEvent
                 ).then(() => {
-                  // console.log(res)
                   this.$el.style.display = "none";
                   this.$emit("add-to-calender", this.event);
                 }).catch(error => {
