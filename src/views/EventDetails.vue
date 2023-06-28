@@ -108,12 +108,6 @@ import {
   linkOutline,
   cashOutline,
   pricetagOutline,
-  logoYoutube,
-  logoTwitter,
-  logoInstagram,
-  logoAppleAppstore,
-  logoFacebook,
-  wifiOutline,
 } from "ionicons/icons";
 import FooterComponent from "@/components/footer.vue";
 import { secureStorage, presentToast } from "@/services/utils";
@@ -361,21 +355,6 @@ export default {
         return currentResolution > prevResolution ? current : prev;
       });
       return image?.url || "";
-    },
-    getIcon(socialMedia) {
-      if (socialMedia == "itunes") {
-        return logoAppleAppstore;
-      } else if (socialMedia === "spotify") {
-        return wifiOutline;
-      } else if (socialMedia === "youtube") {
-        return logoYoutube;
-      } else if (socialMedia === "twitter") {
-        return logoTwitter;
-      } else if (socialMedia === "facebook") {
-        return logoFacebook;
-      } else if (socialMedia === "instagram") {
-        return logoInstagram;
-      }
     },
     rejectEvent() {
       let events = secureStorage().getItem("events");

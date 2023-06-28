@@ -27,7 +27,7 @@ if ($data === null) {
 
 // Set up the cURL options
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'https://api.meetup.com/gql');
+curl_setopt($ch, CURLOPT_URL, 'https://meetup.com/gql');
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));

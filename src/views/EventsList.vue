@@ -1,77 +1,29 @@
 <template>
   <ion-page>
-    <social-media-modal
-      :is-modal-open="authenticateModal"
-      @close-modal="(authenticateModal = false), (eventData = {})"
-    />
+    <social-media-modal :is-modal-open="authenticateModal" @close-modal="authenticateModal = false,eventData={}" />
     <ion-header class="ion-border event-list-header-search">
       <div class="d-flex ion-justify-content-between ion-align-items-center">
         <ion-menu-button :auto-hide="false" menu="main-menu" color="primary">
-          <ion-icon
-            aria-hidden="true"
-            :ios="optionsOutline"
-            :md="optionsOutline"
-            color="light"
-            size="large"
-          ></ion-icon>
+          <ion-icon aria-hidden="true" :ios="optionsOutline" :md="optionsOutline" color="light" size="large"></ion-icon>
         </ion-menu-button>
-        <ion-input
-          v-show="showSearch"
-          style="max-width: 300px"
-          label=""
-          placeholder="Search Events"
-          class="customProfile ion-margin-end"
-          fill="outline"
-          v-model="searchedEvent"
-          :clear-input="true"
-          debounce="500"
-          @ion-input="searchEvents(true)"
-          @ion-change="searchEvents(true)"
-        ></ion-input>
-        <ion-icon
-          @click="showSearch = !showSearch"
-          :ios="searchOutline"
-          :md="searchOutline"
-          color="light"
-          size="large"
-          style="margin-right: 10px"
-        ></ion-icon>
+        <ion-input v-show="showSearch" style="max-width: 300px" label="" placeholder="Search Events"
+          class="customProfile ion-margin-end" fill="outline" v-model="searchedEvent" :clear-input="true" debounce="500"
+          @ion-input="searchEvents(true)" @ion-change="searchEvents(true)"></ion-input>
+        <ion-icon @click="showSearch = !showSearch" :ios="searchOutline" :md="searchOutline" color="light" size="large"
+          style="margin-right: 10px"></ion-icon>
       </div>
     </ion-header>
     <ion-content :fullscreen="true">
       <IonCard class="d-flex flex-column ion-no-margin">
-        <h2
-          style="margin-top: 80px"
-          class="ion-margin-horizontal"
-          v-if="errorText"
-        >
+        <h2 style="margin-top: 80px" class="ion-margin-horizontal" v-if="errorText">
           {{ errorText }}
-          <ion-button v-if="noLocationProvided" @click="getGeoLocation"
-            >Get Location</ion-button
-          >
+          <ion-button v-if="noLocationProvided" @click="getGeoLocation">Get Location</ion-button>
         </h2>
         <template v-else>
-          <swiper
-            :slides-per-view="1"
-            :direction="'vertical'"
-            :modules="modules"
-            class="mySwiper"
-          >
-            <swiper-slide
-              v-for="(event, index) in eventsList"
-              :key="`event-${index}`"
-            >
-              <EventComponent
-                @reject-event="rejectEvent($event, index)"
-                @add-to-calender="addToCalender($event, index)"
-                @next-card="setNextCard"
-                @previous-card="setPreviousCard"
-                @no-authtication-found="handleSocialAuth"
-                :event="event"
-                :events-list-length="eventsList.length"
-              />
-            </swiper-slide>
-          </swiper>
+          <EventComponent v-if="eventsList.length > 0" :class="currentClass" :key="`event-${currentEventIndex}`"
+            @reject-event="rejectEvent($event, index)" @add-to-calender="addToCalender($event, index)"
+            @next-card="setNextCard" @previous-card="setPreviousCard" @no-authtication-found="handleSocialAuth"
+            :event="eventsList[this.currentEventIndex]" :events-list-length="eventsList.length" />
         </template>
       </IonCard>
     </ion-content>
@@ -100,8 +52,6 @@ import { eventStore } from "@/stores/eventStore";
 import { keywordSearchQuery, categorySearchQuery } from "@/constant";
 import socialMediaModal from "@/components/socialMediaModal.vue";
 import axios from "@/service";
-import { Swiper, SwiperSlide } from "swiper/vue";
-import "swiper/css";
 export default {
   name: "EventsList",
   components: {
@@ -115,9 +65,7 @@ export default {
     FooterComponent,
     IonHeader,
     IonButton,
-    socialMediaModal,
-    Swiper,
-    SwiperSlide,
+    socialMediaModal
   },
   data() {
     return {
@@ -131,7 +79,6 @@ export default {
       authenticateModal: false,
       currentClass: "from-bottom",
       eventData: {},
-      modules: [],
     };
   },
   computed: {
@@ -140,7 +87,7 @@ export default {
       "currentEventIndex",
       "totalPages",
       "eventsList",
-      "geoLocation",
+      "geoLocation"
     ]),
   },
   watch: {
@@ -167,71 +114,44 @@ export default {
     this.getGeoLocation();
   },
   mounted() {
-    document.addEventListener(
-      "on-getting-google-access-token",
-      this.handleAddEvent
-    );
+    document.addEventListener("on-getting-google-access-token", this.handleAddEvent)
   },
   beforeUnmount() {
-    document.removeEventListener(
-      "on-getting-google-access-token",
-      this.handleAddEvent
-    );
+    document.removeEventListener("on-getting-google-access-token", this.handleAddEvent)
   },
   methods: {
     handleAddEvent() {
-      this.authenticateModal = false;
+      this.authenticateModal =  false;
       if (Object.keys(this.eventData).length) {
-        window.gapi.client.calendar.events
-          .insert(this.eventData)
-          .then(() => {
-            // console.log(res)
-            this.addToCalender(this.eventsList[this.currentEventIndex]);
-            this.eventData = {};
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        window.gapi.client.calendar.events.insert(
+          this.eventData
+        ).then(() => {
+          this.addToCalender(this.eventsList[this.currentEventIndex]);
+          this.eventData = {}
+        }).catch(error => {
+          console.log(error)
+        })
       }
     },
     ...mapActions(eventStore, [
       "setCurrentIndex",
       "setTotalPages",
       "setEventList",
-      "setLatLong",
+      "setLatLong"
     ]),
     handleSocialAuth(eventData) {
-      // console.log(eventData)
-      this.authenticateModal = true;
+      this.authenticateModal = true
       this.eventData = { ...eventData };
     },
     async getGeoLocation() {
-      // if (navigator.geolocation) {
-      //   navigator.geolocation.getCurrentPosition(
-      //     (position) => {
-      //       console.log(position);
-      //       this.latitude = position.coords.latitude;
-      //       this.longitude = position.coords.longitude;
-      //       if (this.eventsList.length === 0) {
-      //         this.searchEvents(true);
-      //       }
-      //     },
-      //     () => {
-      //       this.errorText =
-      //         "Please allow Location Permission for better results.";
-      //     }
-      //   );
-      // } else {
-      //   console.error("Geolocation is not supported by this browser.");
-      // }
       try {
         const position = await Geolocation.getCurrentPosition();
         this.noLocationProvided = false;
         this.setLatLong({
           latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-        this.errorText = null;
+          longitude: position.coords.longitude
+        })
+        this.errorText = null
         if (this.eventsList.length === 0) {
           this.searchEvents(true);
         }
@@ -245,24 +165,16 @@ export default {
       if (
         this.errorText &&
         this.errorText ===
-          "Please allow Location Permission for better results."
+        "Please allow Location Permission for better results."
       ) {
         return;
       }
       this.errorText = null;
-      // const uniqueTitles = {};
-      // const ticketMaster = await this.getTicketMasterData(reset);
-      // const meetupData = await this.getMeetupData(reset);
-      // const yelpData = await this.getYelpData(reset);
       let data = [];
-      Promise.all([
-        this.getTicketMasterData(reset),
-        this.getMeetupData(reset),
-        this.getYelpData(reset),
-      ]).then((values) => {
+      Promise.all([this.getTicketMasterData(reset), this.getMeetupData(reset), this.getYelpData(reset)]).then((values) => {
         values.forEach((value) => {
           data = [...data, ...value];
-        });
+        })
         if (reset) {
           this.setEventList(data);
           this.setCurrentIndex(0);
@@ -273,15 +185,6 @@ export default {
           this.setEventList([...this.eventsList, ...data]);
         }
       });
-      // .filter(
-      //   (event) => {
-      //     if (!uniqueTitles[event.title]) {
-      //       uniqueTitles[event.title] = true;
-      //       return true;
-      //     }
-      //     return false;
-      //   }
-      // );
     },
     async getTicketMasterData(reset) {
       if (reset) {
@@ -417,7 +320,7 @@ export default {
       }
       if (this.meetupPagination.hasNextPage !== false) {
         return axios
-          .post("https://barebone-aventis.programmers.us/meetup.php", {
+          .post(`${process.env.VUE_APP_PRODUCTION_SERVER}/meetup.php`, {
             operationName,
             query,
             variables,
@@ -486,8 +389,8 @@ export default {
               ? Number(this.filter.radius) * 1000
               : 40000
             : Number(this.filter.radius) * 1609.34 < 40000
-            ? Number(this.filter.radius) * 1609.34
-            : 40000,
+              ? Number(this.filter.radius) * 1609.34
+              : 40000,
         start_date: this.filter.startDateTime
           ? Math.floor(new Date(this.filter.startDateTime).getTime() / 1000.0)
           : Math.floor(new Date().getTime() / 1000.0),
@@ -497,7 +400,7 @@ export default {
           new Date(this.filter.endDateTime).getTime() / 1000.0
         );
       }
-      const apiUrl = `https://barebone-aventis.programmers.us/yelp.php`;
+      const apiUrl = `${process.env.VUE_APP_PRODUCTION_SERVER}/yelp.php`;
       return axios
         .post(apiUrl, query)
         .then(({ data }) => {
@@ -580,10 +483,6 @@ export default {
 };
 </script>
 <style>
-.swiper {
-  width: 100%;
-  height: calc(100dvh - 62px);
-}
 .input-clear-icon ion-icon {
   fill: var(--ion-color-light) !important;
 }
